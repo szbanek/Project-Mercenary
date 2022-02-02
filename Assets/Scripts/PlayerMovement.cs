@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private TileManager manager;
     // Start is called before the first frame update
     void Start()
     {
         
+    }
+    void Awake()
+    {
+        manager = FindObjectOfType<TileManager>();
     }
     // Update is called once per frame
     void Update()
@@ -40,6 +45,15 @@ public class PlayerMovement : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.D))
         {
             transform.position = transform.position + new Vector3(0.73f, -0.8659766f/2);
+        }
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3Int gridPos = manager.map.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            if (manager.isWalkable(Camera.main.ScreenToWorldPoint(Input.mousePosition)))
+            {
+                transform.position = manager.getPosition(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                Debug.Log(transform.position);
+            }
         }
     }
 }
