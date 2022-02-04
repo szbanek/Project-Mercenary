@@ -70,12 +70,12 @@ public class TileManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("clicked");
+            //Debug.Log("clicked");
             Vector2 mPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector3Int gridPos = map.WorldToCell(mPos);
             TileBase tile = map.GetTile(gridPos);
             bool walkable = dataFromTiles[tile].walkable;
-            Debug.Log("Clicked at: " + gridPos + "; walkable: " + walkable);
+            //Debug.Log("Clicked at: " + ToCube(gridPos) + "; walkable: " + walkable);
         }
         
     }
@@ -94,14 +94,14 @@ public class TileManager : MonoBehaviour
         }
     }
     
-    Vector3 ToCube(Vector3Int gridPos)
+    public Vector3 ToCube(Vector3Int gridPos)
     {
-        float q = gridPos.x;
-        float r = gridPos.y - (gridPos.x - (gridPos.x & 1));
-        return new Vector3(q, r, -q - r);
+        float q = gridPos.y;
+        float r = gridPos.x - (gridPos.y - (Mathf.Abs(gridPos.y) %2))/2f;
+        return new Vector3(q, r, -q-r);
     }
 
-    Vector3 ToPix(Vector3Int gridPos)
+    public Vector3 ToPix(Vector3Int gridPos)
     {
         float size = x_offset/3f;
         float x = size*3/2*gridPos.y;
@@ -122,4 +122,9 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    public Vector3Int getPositionGrid(Vector3 pos)
+    {
+        Vector2 p = new Vector2(pos.x, pos.y);
+        return map.WorldToCell(pos);
+    }
 }

@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private TileManager manager;
+    private TileManager tileManager;
+    private RangeManager rangeManager;
+
+    [SerializeField] private int range;
     // Start is called before the first frame update
     void Start()
     {
@@ -12,7 +15,8 @@ public class PlayerMovement : MonoBehaviour
     }
     void Awake()
     {
-        manager = FindObjectOfType<TileManager>();
+        tileManager = FindObjectOfType<TileManager>();
+        rangeManager = FindObjectOfType<RangeManager>();
     }
     // Update is called once per frame
     void Update()
@@ -48,12 +52,28 @@ public class PlayerMovement : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3Int gridPos = manager.map.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            if (manager.isWalkable(Camera.main.ScreenToWorldPoint(Input.mousePosition)))
+            Vector2 camPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3Int gridPos = tileManager.map.WorldToCell(camPos);
+            if (tileManager.isWalkable(camPos) && rangeManager.IsReachable(camPos))
             {
-                transform.position = manager.getPosition(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                Debug.Log(transform.position);
+                transform.position = tileManager.getPosition(camPos);
+                Debug.Log(rangeManager.IsReachable(camPos));
             }
         }
+    }
+
+    public int getRange()
+    {
+        return range;
+    }
+
+    public Vector3 getPosCoor()
+    {
+        return transform.position;
+    }
+
+    public Vector3Int getPosGrid()
+    {
+        return tileManager.getPositionGrid(transform.position);
     }
 }
