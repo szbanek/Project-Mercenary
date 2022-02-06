@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -93,6 +94,12 @@ public class TileManager : MonoBehaviour
             return dataFromTiles[tile].walkable;
         }
     }
+
+    public int getMovementModifier(Vector3Int gridPos)
+    {
+        TileBase tile = map.GetTile(gridPos);
+        return dataFromTiles[tile].movementModifier;
+    }
     
     public Vector3 ToCube(Vector3Int gridPos)
     {
@@ -126,5 +133,16 @@ public class TileManager : MonoBehaviour
     {
         Vector2 p = new Vector2(pos.x, pos.y);
         return map.WorldToCell(pos);
+    }
+
+    Vector3 subtractCube(Vector3 A, Vector3 B)
+    {
+        return new Vector3(A.x - B.x, A.y - B.y, A.z - B.z);
+    }
+
+    public int getDistance(Vector3Int A, Vector3Int B)
+    {
+        Vector3 diff = subtractCube(ToCube(A), ToCube(B));
+        return (int) Mathf.Max(Mathf.Abs(diff.x), Mathf.Max(Mathf.Abs(diff.y), Mathf.Abs(diff.z)));
     }
 }
