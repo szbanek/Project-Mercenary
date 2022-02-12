@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     public static event Action Enemy;
     public static event Action UIOn;
     public static event Action UIOff;
+    public static event Action Lose;
+    public static event Action<int> Hurt;
 
     void Awake()
     {
@@ -27,6 +29,10 @@ public class GameManager : MonoBehaviour
         OnPTB ();
     }
 
+    public void OnHurt(int i) {
+        Hurt?.Invoke (i);
+    }
+    
     public void OnPTB() {
         PlayerTurnBegin?.Invoke ();
     }
@@ -43,6 +49,10 @@ public class GameManager : MonoBehaviour
 
     public void OnEnemy() {
         Enemy?.Invoke ();
+    }
+
+    public void OnLose() {
+        Lose?.Invoke ();
     }
     
     

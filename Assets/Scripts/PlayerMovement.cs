@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -12,14 +13,21 @@ public class PlayerMovement : MonoBehaviour
     private bool canMove;
     private Vector3Int startPosition;
     private int actRange;
+    private int _health = 120;
+    private SpriteRenderer _rend;
+
+    
+    
     void Start()
     {
         actRange = baseRange;
+        _rend = this.gameObject.GetComponent<SpriteRenderer> ();
     }
     void Awake()
     {
         tileManager = FindObjectOfType<TileManager>();
         rangeManager = FindObjectOfType<RangeManager>();
+        
         GameManager.OnGameStateChange += GameManagerOnGameStateChanged;
         GameManager.PlayerTurnBegin += GameManagerOnPTB;
         GameManager.PlayerTurnMain += GameManagerOnPTM;
@@ -94,6 +102,22 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
+
+        if (Input.GetKeyDown (KeyCode.Space))
+        {
+            int a = Random.Range (15, 35);
+            _health -= a;
+            if (_health <= 0)
+            {
+                _rend.enabled = false;
+                GameManager.Instance.OnLose ();
+            }
+            else
+            {
+                GameManager.Instance.OnHurt (a);
+            }
+            
+        }
         
     }
 
@@ -110,5 +134,9 @@ public class PlayerMovement : MonoBehaviour
     public Vector3Int getPosGrid()
     {
         return tileManager.getPositionGrid(transform.position);
+    }
+
+    public int GetHealth() {
+        return _health;
     }
 }
