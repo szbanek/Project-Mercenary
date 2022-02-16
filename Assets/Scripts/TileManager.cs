@@ -18,6 +18,7 @@ public class TileManager : MonoBehaviour
     [SerializeField] private TileBase HexCrater;
     [SerializeField] private List<TileData> tileDatas;
     private Dictionary<TileBase, TileData> dataFromTiles;
+    private int[,,] _neighbours = {{{1, 0}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}}, {{1, 0}, {1, 1}, {0, 1}, {-1, 0}, {0, -1}, {1, -1}}};
     void Start()
     {
         //GenerateMap();
@@ -84,6 +85,10 @@ public class TileManager : MonoBehaviour
     public bool isWalkable(Vector2 pos)
     {
         Vector3Int gridPos = map.WorldToCell(pos);
+        return isWalkable (gridPos);
+    }
+
+    public bool isWalkable(Vector3Int gridPos) {
         TileBase tile = map.GetTile(gridPos);
         if (tile == null)
         {
@@ -144,5 +149,20 @@ public class TileManager : MonoBehaviour
     {
         Vector3 diff = subtractCube(ToCube(A), ToCube(B));
         return (int) Mathf.Max(Mathf.Abs(diff.x), Mathf.Max(Mathf.Abs(diff.y), Mathf.Abs(diff.z)));
+    }
+    
+    public List<Vector3Int> GetNeigbours(Vector3Int pos) {
+        TileBase tile = map.GetTile(pos);
+        List<Vector3Int> res = new List<Vector3Int> (); 
+        if (tile != null)
+        {
+            int parity = Math.Abs(pos.y) % 2;
+            for (int i = 0; i < 6; i++)
+            {
+                res.Add (new Vector3Int (pos.x + _neighbours[parity, i, 0], pos.y + _neighbours[parity, i, 1], 0));
+            }
+        }
+
+        return res;
     }
 }

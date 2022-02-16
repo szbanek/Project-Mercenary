@@ -92,6 +92,7 @@ public class PlayerMovement : MonoBehaviour
                     Debug.Log(rangeManager.IsReachable(camPos));
                     int diff = tileManager.getDistance(startPosition, gridPos);
                     actRange -= diff;
+                    GameManager.Instance.OnMove ();
                     if (actRange == 0)
                     {
                         //GameManager.Instance.UpdateGameState(GameState.PlayerTurnEnd);

@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public static event Action UIOff;
     public static event Action Lose;
     public static event Action<int> Hurt;
+    public static event Action Move;
 
     void Awake()
     {
@@ -27,6 +28,10 @@ public class GameManager : MonoBehaviour
     {
         //UpdateGameState(GameState.PlayerTurnBeg);
         OnPTB ();
+    }
+
+    public void OnMove() {
+        Move?.Invoke ();
     }
 
     public void OnHurt(int i) {
