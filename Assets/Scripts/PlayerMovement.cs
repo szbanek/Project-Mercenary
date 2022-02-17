@@ -12,9 +12,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private int baseRange;
     private bool canMove;
     private Vector3Int startPosition;
+    private Vector3 coorPosition;
     private int actRange;
     private int _health = 120;
     private SpriteRenderer _rend;
+    private bool isMoving=false;
 
     
     
@@ -80,7 +82,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void Update()
     {
-        if (canMove)
+        if (canMove && !isMoving)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -88,19 +90,29 @@ public class PlayerMovement : MonoBehaviour
                 Vector3Int gridPos = tileManager.map.WorldToCell(camPos);
                 if (tileManager.isWalkable(camPos) && rangeManager.IsReachable(camPos))
                 {
-                    transform.position = tileManager.getPosition(camPos);
+                    coorPosition = camPos;
                     Debug.Log(rangeManager.IsReachable(camPos));
                     int diff = tileManager.getDistance(startPosition, gridPos);
                     actRange -= diff;
                     GameManager.Instance.OnMove ();
-                    if (actRange == 0)
+                    startPosition = gridPos;
+                    isMoving = true;
+                }
+            }
+        }
+
+        if(isMoving)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, tileManager.getPosition(coorPosition), 4f * Time.deltaTime);
+            GameManager.Instance.OnMove ();
+            if (transform.position == tileManager.getPosition(coorPosition))
+            {
+                isMoving=false;
+                if (actRange == 0)
                     {
                         //GameManager.Instance.UpdateGameState(GameState.PlayerTurnEnd);
                         GameManager.Instance.OnPTE ();
                     }
-
-                    startPosition = gridPos;
-                }
             }
         }
 
@@ -129,12 +141,12 @@ public class PlayerMovement : MonoBehaviour
 
     public Vector3 getPosCoor()
     {
-        return transform.position;
+        return coorPosition;
     }
 
     public Vector3Int getPosGrid()
     {
-        return tileManager.getPositionGrid(transform.position);
+        return startPosition;
     }
 
     public int GetHealth() {
