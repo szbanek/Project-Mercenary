@@ -165,4 +165,89 @@ public class TileManager : MonoBehaviour
 
         return res;
     }
+
+    public List<Vector3Int> CalculateRoute(Vector3Int startPoint, Vector3Int goal) {
+        float distance = getDistance (startPoint, goal);
+        var toSearch = new List < Tuple <Vector3Int, List <float> > >();
+        toSearch.Add (new Tuple<Vector3Int, List<float>> (startPoint, new List<float> {0f, distance, distance})); // g,h,f
+		var porcessed = new List <Vector3Int> ();
+
+        var connections = new Dictionary<Vector3Int, Vector3Int> ();
+        
+        while (toSearch.Count > 0)
+        {
+            var current = toSearch[0];
+            int size = toSearch.Count;
+            for (int i = 0; i < size; i++)
+            {
+                var vertex = toSearch[0];
+                if (vertex.Item2[2] < current.Item2[2] || vertex.Item2[2] == current.Item2[2] && vertex.Item2[1] < current.Item2[1])
+                {
+                    current = vertex;
+                }
+
+                porcessed.Add (current.Item1);
+                toSearch.Remove (current);
+
+                if (current.Item1 == goal)
+                {
+                    var currentPathTile = current.Item1;
+                    var path = new List<Vector3Int> ();
+                    while (currentPathTile != startPoint)
+                    {
+                        path.Add (currentPathTile);
+                        currentPathTile = connections[currentPathTile];
+                    }
+
+                    // foreach (var step in path)
+                    // {
+                    //     Debug.Log (step);
+                    // }
+
+                    return path;
+                }
+                
+                
+                var nei = GetNeigbours (current.Item1);
+                foreach (var n in nei)
+                {
+                    if (isWalkable (n) && !porcessed.Contains (n))
+                    {
+                        bool isIn = false;
+                        foreach (var v in toSearch)
+                        {
+                            isIn = isIn || (v.Item1 == n);
+                        }
+
+                        var data = new Tuple<Vector3Int, List<float>> (n, new List<float>() );
+                        data.Item2.Add (current.Item2[0]+1);
+                        data.Item2.Add (getDistance (n, goal));
+                        data.Item2.Add (data.Item2[0]+data.Item2[1]);
+                        
+                        float costToN = current.Item2[0] + getDistance (current.Item1, n);
+                        if (!isIn || costToN < data.Item2[0])
+                        {
+                            data.Item2[0] = costToN;
+                            if (connections.ContainsKey (n))
+                            {
+                                connections[n] = current.Item1;
+                            }
+                            else
+                            {
+                                connections.Add (n, current.Item1);
+                            }
+                            //set connection;
+                            if (!isIn)
+                            {
+                                toSearch.Add (data);
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
 }

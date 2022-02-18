@@ -15,7 +15,7 @@ public class RightPanleManager : MonoBehaviour
     private bool _playerTurn = true;
     private float _energyBarX = 360.6f;
     private float _lifeBarX = 302.42f;
-    private float _energyBarY = -190.0f;
+    private float _energyBarY = -190f;
     private List<GameObject> _energyList;
     private List<GameObject> _lifeList;
 

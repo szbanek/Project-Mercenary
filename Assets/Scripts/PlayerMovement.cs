@@ -86,14 +86,14 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                Vector2 camPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector3Int gridPos = tileManager.map.WorldToCell(camPos);
-                if (tileManager.isWalkable(camPos) && rangeManager.IsReachable(camPos))
+                Vector2 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3Int gridPos = tileManager.map.WorldToCell(targetPos);
+                if (tileManager.isWalkable(targetPos) && rangeManager.IsReachable(targetPos))
                 {
-                    coorPosition = camPos;
-                    Debug.Log(rangeManager.IsReachable(camPos));
-                    int diff = tileManager.getDistance(startPosition, gridPos);
-                    actRange -= diff;
+                    coorPosition = targetPos;
+                    int dist = tileManager.CalculateRoute (tileManager.getPositionGrid (transform.position), gridPos).Count;
+                    Debug.Log ("dist = " + dist);
+                    actRange -= dist;
                     GameManager.Instance.OnMove ();
                     startPosition = gridPos;
                     isMoving = true;
@@ -109,10 +109,9 @@ public class PlayerMovement : MonoBehaviour
             {
                 isMoving=false;
                 if (actRange == 0)
-                    {
-                        //GameManager.Instance.UpdateGameState(GameState.PlayerTurnEnd);
-                        GameManager.Instance.OnPTE ();
-                    }
+                {
+                    GameManager.Instance.OnPTE ();
+                }
             }
         }
 
