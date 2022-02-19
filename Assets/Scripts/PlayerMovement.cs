@@ -17,6 +17,8 @@ public class PlayerMovement : MonoBehaviour
     private int _health = 120;
     private SpriteRenderer _rend;
     private bool isMoving=false;
+    private List<Vector3Int> route;
+    private int routeCounter;
 
     
     
@@ -91,11 +93,14 @@ public class PlayerMovement : MonoBehaviour
                 if (tileManager.isWalkable(targetPos) && rangeManager.IsReachable(targetPos))
                 {
                     coorPosition = targetPos;
-                    int dist = tileManager.CalculateRoute (tileManager.getPositionGrid (transform.position), gridPos).Count;
+                    route = tileManager.CalculateRoute (tileManager.getPositionGrid (transform.position), gridPos);
+                    route.Reverse();
+                    int dist = route.Count;
                     Debug.Log ("dist = " + dist);
                     actRange -= dist;
                     GameManager.Instance.OnMove ();
                     startPosition = gridPos;
+                    routeCounter = 0;
                     isMoving = true;
                 }
             }
@@ -103,8 +108,12 @@ public class PlayerMovement : MonoBehaviour
 
         if(isMoving)
         {
-            transform.position = Vector3.MoveTowards(transform.position, tileManager.getPosition(coorPosition), 4f * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, tileManager.ToPix(route[routeCounter]), 4f * Time.deltaTime);
             GameManager.Instance.OnMove ();
+            if (transform.position == tileManager.ToPix(route[routeCounter]))
+            {
+                routeCounter += 1;
+            }
             if (transform.position == tileManager.getPosition(coorPosition))
             {
                 isMoving=false;
