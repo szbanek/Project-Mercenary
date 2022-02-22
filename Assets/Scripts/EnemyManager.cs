@@ -30,13 +30,8 @@ public class EnemyManager : MonoBehaviour
         
     }
 
-    private async Task DoSth() {
-        Debug.Log ("in enemy state");
-        await Task.Delay (1000);
-    }
-    public async void GameManagerOnEnemy() {
+    public void GameManagerOnEnemy() {
         EnemiesMove();
-        //await DoSth ();
         GameManager.Instance.OnPTB ();
     }
 
@@ -44,8 +39,34 @@ public class EnemyManager : MonoBehaviour
     {
         for(int i = 0; i < enemies.Count; i++)
         {
-            var enemyMovement = enemies[i].GetComponent<EnemyMovement> ();
-            enemyMovement.action();
+            EnemyMovement enemyMovement = enemies[i].GetComponent<EnemyMovement> ();
+            enemyMovement.Action();
+        }
+    }
+
+    public EnemyMovement GetEnemyByGrid(Vector3Int vector)
+    {
+        for(int i = 0; i < enemies.Count; i++)
+        {
+            EnemyMovement enemyMovement = enemies[i].GetComponent<EnemyMovement> ();
+            if(enemyMovement.GetPosGrid() == vector)
+            {
+                return enemyMovement;
+            }
+        }
+        return null;
+    }
+
+    public void Destroy(Vector3Int gridPos)
+    {
+        for(int i = 0; i < enemies.Count; i++)
+        {
+            EnemyMovement enemyMovement = enemies[i].GetComponent<EnemyMovement> ();
+            if(enemyMovement.GetPosGrid() == gridPos)
+            {
+                Destroy(enemies[i]);
+                enemies.RemoveAt(i);
+            }
         }
     }
 }

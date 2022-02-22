@@ -151,6 +151,10 @@ public class TileManager : MonoBehaviour
         return (int) Mathf.Max(Mathf.Abs(diff.x), Mathf.Max(Mathf.Abs(diff.y), Mathf.Abs(diff.z)));
     }
     
+    public List<Vector3Int> GetNeigbours(Vector3 pos) {
+        return GetNeigbours(getPositionGrid(pos));
+    }
+    
     public List<Vector3Int> GetNeigbours(Vector3Int pos) {
         TileBase tile = map.GetTile(pos);
         List<Vector3Int> res = new List<Vector3Int> (); 

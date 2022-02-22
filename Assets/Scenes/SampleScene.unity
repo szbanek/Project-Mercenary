@@ -1121,7 +1121,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c19f10018fc064da13dcecc27c1549, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseRange: 3
+  maxEnergy: 3
+  attackEnergy: 0
 --- !u!1 &1474839830
 GameObject:
   m_ObjectHideFlags: 0

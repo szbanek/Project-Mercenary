@@ -100,7 +100,7 @@ public class RightPanleManager : MonoBehaviour
     }
 
     private void SetEnergyPoints() {
-        int energy = _player.getRange ();
+        int energy = _player.GetEnergy ();
         if (_playerTurn)
         {
             if (_energyList.Count != energy)

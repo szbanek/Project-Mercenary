@@ -29,12 +29,12 @@ public class RangeManager : MonoBehaviour
     }
 
     void OnPlayerTurnMain() {
-        GetReachableList (player.getRange ());
+        GetReachableList (player.GetEnergy ());
         SetRangeMap ();
     }
 
     void OnMove() {
-        GetReachableList (player.getRange ());
+        GetReachableList (player.GetEnergy ());
         SetRangeMap ();
     }
 
@@ -45,7 +45,7 @@ public class RangeManager : MonoBehaviour
 
 
     private void SetRangeMap() {
-        Vector3 pos = manager.ToCube (player.getPosGrid ());
+        Vector3 pos = manager.ToCube (player.GetPosGrid ());
 
         for (int x = mainMap.cellBounds.min.x; x < mainMap.cellBounds.max.x; x ++)
         {
@@ -66,8 +66,8 @@ public class RangeManager : MonoBehaviour
 
     private void GenerateRangeMap() {
         _reachable.Clear ();
-        int range = player.getRange ();
-        Vector3 pos = manager.ToCube (player.getPosGrid ());
+        int range = player.GetEnergy ();
+        Vector3 pos = manager.ToCube (player.GetPosGrid ());
 
         for (int x = mainMap.cellBounds.min.x; x < mainMap.cellBounds.max.x; x ++)
         {
@@ -129,7 +129,7 @@ public class RangeManager : MonoBehaviour
 
     private void GetReachableList(int range) {
         _reachable.Clear();
-        Vector3Int start = player.getPosGrid ();
+        Vector3Int start = player.GetPosGrid ();
         _reachable.Add (start);
         List<List<Vector3Int>> fringes = new List<List<Vector3Int>> ();
         fringes.Add (new List<Vector3Int> {start});
