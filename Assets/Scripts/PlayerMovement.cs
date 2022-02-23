@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private int attackEnergy = 1;
     private int energy;
     private int _health = 120;
+    [SerializeField] private int attackDamage = 30;
     private TileManager tileManager;
     private RangeManager rangeManager;
     private EnemyManager enemyManager;
@@ -172,8 +173,8 @@ public class PlayerMovement : MonoBehaviour
         if(energy >= attackEnergy)
         {
             energy -= attackEnergy;
-            AttackAnimation (enemy);
-            enemy.TakeDamage(30);
+            AttackAnimation(enemy);
+            enemy.TakeDamage(attackDamage);
             GameManager.Instance.OnMove(); //GameManager.Instance.OnAttack();
             if (energy == 0)
             {
@@ -183,19 +184,30 @@ public class PlayerMovement : MonoBehaviour
         
     }
 
-    async Task MoveAnimation(Vector3 goal) {
-        transform.position = Vector3.MoveTowards (transform.position, goal, 4f * Time.deltaTime);
-        await Task.Yield ();
+    private async Task<bool> MoveAnimation(Vector3 goal)
+    {
+        transform.position = Vector3.MoveTowards(transform.position, goal, 4f * Time.deltaTime);
+        await Task.Yield();
+        if(transform.position == goal)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
-    private async void AttackAnimation(EnemyMovement enemy) { // może uda ci się dojść, jak to powinno działać
+    private async void AttackAnimation(EnemyMovement enemy)
+    { 
         var pos = transform.position;
-        var goal = tileManager.ToPix (enemy.GetPosGrid ());
-        await MoveAnimation (goal);
-        await MoveAnimation (pos);
+        var goal = tileManager.CalculateMiddle(tileManager.ToPix(enemy.GetPosGrid()), pos);
+        while(await MoveAnimation(goal));
+        while(await MoveAnimation(pos));
     }
 
-    public void TakeDamage(int damage) {
+    public void TakeDamage(int damage)
+    {
         _health -= damage;
         if (_health <= 0)
         {

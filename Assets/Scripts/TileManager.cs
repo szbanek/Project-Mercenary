@@ -131,6 +131,13 @@ public class TileManager : MonoBehaviour
         return map.WorldToCell(pos);
     }
 
+    public Vector3 CalculateMiddle(Vector3 vector1, Vector3 vector2)
+    {
+        var x = (vector1.x + vector2.x)/2;
+        var y = (vector1.y + vector2.y)/2;
+        return new Vector3(x, y);
+    }
+
     Vector3 subtractCube(Vector3 A, Vector3 B)
     {
         return new Vector3(A.x - B.x, A.y - B.y, A.z - B.z);

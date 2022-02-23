@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class EnemyMovement : MonoBehaviour
 {
@@ -81,6 +82,10 @@ public class EnemyMovement : MonoBehaviour
     private void Attack()
     {
         if(energy >= attackEnergy){
+            if(attackRange == 1)
+            {
+                AttackAnimationMelee();
+            }
             playerMovement.TakeDamage(attackDamage);
             energy -= attackEnergy;
             if (energy <= 0)
@@ -94,6 +99,29 @@ public class EnemyMovement : MonoBehaviour
             Move();
         }
     }
+
+    private async Task<bool> MoveAnimation(Vector3 goal)
+    {
+        transform.position = Vector3.MoveTowards(transform.position, goal, 4f * Time.deltaTime);
+        await Task.Yield();
+        if(transform.position == goal)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private async void AttackAnimationMelee()
+    { 
+        var pos = transform.position;
+        var goal = tileManager.CalculateMiddle(tileManager.ToPix(playerMovement.GetPosGrid()), pos);
+        while(await MoveAnimation(goal));
+        while(await MoveAnimation(pos));
+    }
+
     public void TakeDamage(int damage) {
         currentHealth -= damage;
         if (currentHealth <= 0)
