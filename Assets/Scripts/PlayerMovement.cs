@@ -166,11 +166,13 @@ public class PlayerMovement : MonoBehaviour
     }
     private IEnumerator Attack(EnemyMovement enemy)
     {
+        Debug.Log (enemy.GetPosGrid ());
         done = true;
         yield return new WaitUntil(() => isMoving == false);
         if(energy >= attackEnergy)
         {
             energy -= attackEnergy;
+            AttackAnimation (enemy);
             enemy.TakeDamage(30);
             GameManager.Instance.OnMove(); //GameManager.Instance.OnAttack();
             if (energy == 0)
@@ -179,6 +181,18 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         
+    }
+
+    async Task MoveAnimation(Vector3 goal) {
+        transform.position = Vector3.MoveTowards (transform.position, goal, 4f * Time.deltaTime);
+        await Task.Yield ();
+    }
+
+    private async void AttackAnimation(EnemyMovement enemy) { // może uda ci się dojść, jak to powinno działać
+        var pos = transform.position;
+        var goal = tileManager.ToPix (enemy.GetPosGrid ());
+        await MoveAnimation (goal);
+        await MoveAnimation (pos);
     }
 
     public void TakeDamage(int damage) {

@@ -155,7 +155,7 @@ public class TileManager : MonoBehaviour
         return new Vector3 (LinearInterpolation (a.x, b.x, t), LinearInterpolation (a.y, b.y, t), LinearInterpolation (a.z, b.z, t));
     }
 
-    Vector3Int CubeRound(Vector3 a) {
+    public Vector3Int CubeRound(Vector3 a) {
         int q = Mathf.RoundToInt (a.x);
         int r = Mathf.RoundToInt (a.y);
         int s = Mathf.RoundToInt (a.z);
