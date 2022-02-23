@@ -27,8 +27,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         //UpdateGameState(GameState.PlayerTurnBeg);
-        OnPTB ();
     }
+    
 
     public void OnMove() {
         Move?.Invoke ();
