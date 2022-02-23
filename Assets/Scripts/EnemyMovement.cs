@@ -18,7 +18,6 @@ public class EnemyMovement : MonoBehaviour
     private EnemyManager enemyManager;
     private SpriteRenderer _rend;
     private List<Vector3Int> route;
-    private int routeCounter;
     private bool canMove = false;
     private bool isMoving = false;
 
@@ -43,14 +42,7 @@ public class EnemyMovement : MonoBehaviour
         {
             if(tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) > attackRange)
             {
-                route = tileManager.CalculateRoute (tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position));
-                route.Reverse();
-                routeCounter = 0;
-                if(energy >= moveEnergy)
-                {
-                    isMoving = true;
-                    energy -= moveEnergy;
-                }
+                Move();
             }
             else
             {
@@ -60,30 +52,35 @@ public class EnemyMovement : MonoBehaviour
 
         if (isMoving)
         {
-            transform.position = Vector3.MoveTowards(transform.position, tileManager.ToPix(route[routeCounter]), 4f * Time.deltaTime);
-            if (transform.position == tileManager.ToPix(route[routeCounter]))
+            transform.position = Vector3.MoveTowards(transform.position, tileManager.ToPix(route[0]), 4f * Time.deltaTime);
+            if (transform.position == tileManager.ToPix(route[0]))
             {
-                if(tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) > attackRange)
+                isMoving = false;
+                if(energy <= 0)
                 {
-                    if (energy <= 0)
-                    {
-                        isMoving = false;
-                        canMove = false;
-                    }
-                    routeCounter++;
-                    energy -= moveEnergy;
-                }
-                else
-                {
-                    Attack();
+                    canMove = false;
                 }
             }
         }
     }
 
+    private void Move()
+    {
+        route = tileManager.CalculateRoute (tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position));
+        route.Reverse();
+        if(energy >= moveEnergy && tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) > 1)
+        {
+            isMoving = true;
+            energy -= moveEnergy;
+        }
+        else
+        {
+            canMove = false;
+        }
+    }
     private void Attack()
     {
-        if(energy > 0){
+        if(energy >= attackEnergy){
             playerMovement.TakeDamage(attackDamage);
             energy -= attackEnergy;
             if (energy <= 0)
@@ -91,6 +88,10 @@ public class EnemyMovement : MonoBehaviour
                 isMoving = false;
                 canMove = false;
             }
+        }
+        else
+        {
+            Move();
         }
     }
     public void TakeDamage(int damage) {
@@ -101,10 +102,12 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    public void Action()
+    public IEnumerator Action()
     {
         energy = maxEnergy;
         canMove = true;
+        yield return new WaitUntil(() => canMove == false);
+        enemyManager.NextEnemyMove();
     }
 
     public Vector3Int GetPosGrid()

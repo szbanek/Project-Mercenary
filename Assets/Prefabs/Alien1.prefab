@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5525540067731844469}
-  - component: {fileID: 8343933583016302827}
   - component: {fileID: 5525540067731844470}
   - component: {fileID: 5525540067731844465}
+  - component: {fileID: 8343933583016302827}
   m_Layer: 0
   m_Name: Alien1
   m_TagString: Enemy
@@ -34,21 +34,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8343933583016302827
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5525540067731844468}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3805b33aa5978dd49851ed103ed744f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseRange: 1
-  maxHealth: 20
-  currentHealth: 20
 --- !u!212 &5525540067731844470
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -139,3 +124,23 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &8343933583016302827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5525540067731844468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3805b33aa5978dd49851ed103ed744f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 2
+  attackDamage: 10
+  attackEnergy: 1
+  moveEnergy: 1
+  maxEnergy: 1
+  energy: 0
+  maxHealth: 20
+  currentHealth: 20

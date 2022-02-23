@@ -1122,7 +1122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxEnergy: 3
-  attackEnergy: 0
+  attackEnergy: 1
 --- !u!1 &1474839830
 GameObject:
   m_ObjectHideFlags: 0

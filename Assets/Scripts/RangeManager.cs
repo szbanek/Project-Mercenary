@@ -5,7 +5,8 @@ using UnityEngine.Tilemaps;
 
 public class RangeManager : MonoBehaviour
 {
-    private TileManager manager;
+    private TileManager tileManager;
+    private EnemyManager enemyManager; //GetEnemiesPlaement() daje liste z położeniem przeciwników
     public Tilemap mainMap;
     public Tilemap selfMap;
     [SerializeField] private TileBase Highlight;
@@ -17,7 +18,8 @@ public class RangeManager : MonoBehaviour
     {}
 
     void Awake() {
-        manager = FindObjectOfType<TileManager>();
+        tileManager = FindObjectOfType<TileManager>();
+        enemyManager = FindObjectOfType<EnemyManager>();
         _reachable = new List<Vector3Int>();
         GameManager.PlayerTurnMain += OnPlayerTurnMain;
         GameManager.Move += OnMove;
@@ -45,7 +47,7 @@ public class RangeManager : MonoBehaviour
 
 
     private void SetRangeMap() {
-        Vector3 pos = manager.ToCube (player.GetPosGrid ());
+        Vector3 pos = tileManager.ToCube (player.GetPosGrid ());
 
         for (int x = mainMap.cellBounds.min.x; x < mainMap.cellBounds.max.x; x ++)
         {
@@ -67,7 +69,7 @@ public class RangeManager : MonoBehaviour
     private void GenerateRangeMap() {
         _reachable.Clear ();
         int range = player.GetEnergy ();
-        Vector3 pos = manager.ToCube (player.GetPosGrid ());
+        Vector3 pos = tileManager.ToCube (player.GetPosGrid ());
 
         for (int x = mainMap.cellBounds.min.x; x < mainMap.cellBounds.max.x; x ++)
         {
@@ -77,7 +79,7 @@ public class RangeManager : MonoBehaviour
                 TileBase tile = mainMap.GetTile (coordinates);
                 if (tile != null)
                 {
-                    Vector3 tilePos = manager.ToCube (coordinates);
+                    Vector3 tilePos = tileManager.ToCube (coordinates);
                     if (-range <= (tilePos.x - pos.x) && (tilePos.x - pos.x) <= range)
                     {
                         if (-range <= (tilePos.y - pos.y) && (tilePos.y - pos.y) <= range)
@@ -138,10 +140,10 @@ public class RangeManager : MonoBehaviour
             fringes.Add (new List<Vector3Int> ());
             foreach (Vector3Int coordinate in fringes[k - 1])
             {
-                List<Vector3Int> nei = manager.GetNeigbours (coordinate);
+                List<Vector3Int> nei = tileManager.GetNeigbours (coordinate);
                 foreach (var neighbour in nei)
                 {
-                    if (!_reachable.Contains (neighbour) && manager.isWalkable (neighbour))
+                    if (!_reachable.Contains (neighbour) && tileManager.isWalkable (neighbour))
                     {
                         _reachable.Add (neighbour);
                         fringes[k].Add (neighbour);

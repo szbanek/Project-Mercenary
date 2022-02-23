@@ -20,8 +20,8 @@ public class PlayerMovement : MonoBehaviour
     private List<Vector3Int> route;
     private int routeCounter;
     private bool canMove;
-    private bool isMoving=false;
-    private bool attacked = false;
+    private bool isMoving = false;
+    private bool done = false;
 
     
     
@@ -91,39 +91,34 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                attacked = false;
+                done = false;
                 Vector2 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector3Int gridPos = tileManager.map.WorldToCell(targetPos);
                 EnemyMovement enemy = enemyManager.GetEnemyByGrid(gridPos);
                 if(gridPos == tileManager.getPositionGrid(transform.position))
                 {
                     energy--;
-                    attacked = true;
+                    done = true;
                     if (energy <= 0)
                     {
                         GameManager.Instance.OnPTE ();
                     }
                 }
-                if(enemy != null && !attacked)
+                if(enemy != null && !done)
                 {
                     if(tileManager.GetNeigbours(transform.position).Contains(gridPos))
                     {
-                        Attack(enemy);
-                        attacked = true;
+                        StartCoroutine(Attack(enemy));
+                    }
+                    else if(rangeManager.IsReachable(targetPos) && !done)
+                    {
+                        Move(gridPos, true);
+                        StartCoroutine(Attack(enemy));
                     }
                 }
-                if (tileManager.isWalkable(targetPos) && rangeManager.IsReachable(targetPos) && !attacked)
+                if (tileManager.isWalkable(targetPos) && rangeManager.IsReachable(targetPos) && !done)
                 {
-                    coorPosition = targetPos;
-                    route = tileManager.CalculateRoute (tileManager.getPositionGrid (transform.position), gridPos);
-                    route.Reverse();
-                    int dist = route.Count;
-                    //Debug.Log ("dist = " + dist);
-                    energy -= dist;
-                    GameManager.Instance.OnMove ();
-                    startPosition = gridPos;
-                    routeCounter = 0;
-                    isMoving = true;
+                    Move(gridPos, false);
                 }
             }
         }
@@ -131,14 +126,16 @@ public class PlayerMovement : MonoBehaviour
         if(isMoving)
         {
             transform.position = Vector3.MoveTowards(transform.position, tileManager.ToPix(route[routeCounter]), 4f * Time.deltaTime);
-            GameManager.Instance.OnMove ();
             if (transform.position == tileManager.ToPix(route[routeCounter]))
             {
                 routeCounter++;
             }
-            if (transform.position == tileManager.getPosition(coorPosition))
+            if (transform.position == tileManager.ToPix(route[route.Count-1]))
             {
                 isMoving=false;
+                startPosition = tileManager.getPositionGrid(transform.position);
+                coorPosition = transform.position;
+                GameManager.Instance.OnMove();
                 if (energy <= 0)
                 {
                     GameManager.Instance.OnPTE ();
@@ -153,18 +150,33 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    public void Attack(EnemyMovement enemy)
+    private void Move(Vector3Int gridPos, bool reduced)
     {
+        route = tileManager.CalculateRoute (tileManager.getPositionGrid (transform.position), gridPos);
+        route.Reverse();
+        if(reduced)
+        {
+            route.RemoveAt(route.Count - 1);
+        }
+        int dist = route.Count;
+        //Debug.Log ("dist = " + dist);
+        energy -= dist;
+        routeCounter = 0;
+        isMoving = true;
+    }
+    private IEnumerator Attack(EnemyMovement enemy)
+    {
+        done = true;
+        yield return new WaitUntil(() => isMoving == false);
         if(energy >= attackEnergy)
         {
             energy -= attackEnergy;
             enemy.TakeDamage(30);
-            GameManager.Instance.OnMove();
+            GameManager.Instance.OnMove(); //GameManager.Instance.OnAttack();
             if (energy == 0)
             {
                 GameManager.Instance.OnPTE ();
             }
-            //GameManager.Instance.OnAttack();
         }
         
     }
