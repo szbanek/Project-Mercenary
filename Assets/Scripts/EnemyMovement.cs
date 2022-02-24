@@ -131,4 +131,9 @@ public class EnemyMovement : MonoBehaviour
     {
         return tileManager.getPositionGrid(transform.position);
     }
+
+    public int CalculateScore()
+    {
+        return (int)((attackRange*attackDamage*maxEnergy*(maxHealth-currentHealth*2))/(attackEnergy*moveEnergy*25));
+    }
 }

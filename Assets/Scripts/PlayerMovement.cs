@@ -15,6 +15,7 @@ public class PlayerMovement : MonoBehaviour
     private TileManager tileManager;
     private RangeManager rangeManager;
     private EnemyManager enemyManager;
+    private ScoreManager scoreManager;
     private Vector3Int startPosition;
     private Vector3 coorPosition;
     private SpriteRenderer _rend;
@@ -35,6 +36,7 @@ public class PlayerMovement : MonoBehaviour
         tileManager = FindObjectOfType<TileManager>();
         rangeManager = FindObjectOfType<RangeManager>();
         enemyManager = FindObjectOfType<EnemyManager>();
+        scoreManager = FindObjectOfType<ScoreManager>();
         
         GameManager.OnGameStateChange += GameManagerOnGameStateChanged;
         GameManager.PlayerTurnBegin += GameManagerOnPTB;
@@ -137,6 +139,7 @@ public class PlayerMovement : MonoBehaviour
         int dist = route.Count;
         //Debug.Log ("dist = " + dist);
         energy -= dist;
+        scoreManager.ChangeScore(-dist); //distance traveled
         for(int i=0; i < route.Count; i++)
         {
             while(await MoveAnimation(tileManager.ToPix(route[i])));
@@ -158,6 +161,7 @@ public class PlayerMovement : MonoBehaviour
         if(energy >= attackEnergy)
         {
             energy -= attackEnergy;
+            scoreManager.ChangeScore(-attackEnergy); //attacks done
             await AttackAnimation(enemy);
             GameManager.Instance.OnMove(); //GameManager.Instance.OnAttack();
             isMoving = false;
@@ -194,8 +198,10 @@ public class PlayerMovement : MonoBehaviour
     public void TakeDamage(int damage)
     {
         _health -= damage;
+        scoreManager.ChangeScore(-damage); //damage taken
         if (_health <= 0)
         {
+            scoreManager.ChangeScore(_health); //overkill damage
             _rend.enabled = false;
             GameManager.Instance.OnLose ();
         }

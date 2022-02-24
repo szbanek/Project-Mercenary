@@ -8,6 +8,7 @@ public class EnemyManager : MonoBehaviour
 {
 
     private TileManager tileManager;
+    private ScoreManager scoreManager;
     [SerializeField] private List<GameObject> prefabs;
     private List<GameObject> enemies = new List<GameObject> ();
     private List<Vector3Int> enemiesPlacement = new List<Vector3Int>();
@@ -16,6 +17,7 @@ public class EnemyManager : MonoBehaviour
     void Start()
     {
         tileManager = FindObjectOfType<TileManager>();
+        scoreManager = FindObjectOfType<ScoreManager>();
         Create(0, new Vector3Int(1, 1, 0));
         Create(1, new Vector3Int(-1, 1, 0));
     }
@@ -77,6 +79,7 @@ public class EnemyManager : MonoBehaviour
             EnemyMovement enemyMovement = enemies[i].GetComponent<EnemyMovement> ();
             if(enemyMovement.GetPosGrid() == gridPos)
             {
+                scoreManager.ChangeScore(enemyMovement.CalculateScore()); //kill
                 Destroy(enemies[i]);
                 enemies.RemoveAt(i);
             }
