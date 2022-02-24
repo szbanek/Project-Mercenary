@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
-
+//TODO: range detection
+// Aliens should be under the canvas
+// Chceck if tile is occupied
 public class EnemyMovement : MonoBehaviour
 {
     [SerializeField] private int attackRange = 1;
