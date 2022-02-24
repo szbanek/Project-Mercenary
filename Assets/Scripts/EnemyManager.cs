@@ -8,11 +8,9 @@ public class EnemyManager : MonoBehaviour
 {
 
     private TileManager tileManager;
-    private EnemyMovement enemyMovement;
     [SerializeField] private List<GameObject> prefabs;
     private List<GameObject> enemies = new List<GameObject> ();
     private List<Vector3Int> enemiesPlacement = new List<Vector3Int>();
-    int currentEnemy = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -38,36 +36,27 @@ public class EnemyManager : MonoBehaviour
         
     }
 
-    public void GameManagerOnEnemy()
+    public async void GameManagerOnEnemy()
     {
-        currentEnemy = 0;
-        NextEnemyMove();
+        await EnemiesMove();
+        GameManager.Instance.OnPTB();
     }
 
-    public void NextEnemyMove()
+    public async Task EnemiesMove()
     {
-        if(currentEnemy > 0)
+        for(int i=0; i<enemies.Count; i++)
         {
-            enemyMovement = enemies[currentEnemy-1].GetComponent<EnemyMovement>();
-            enemiesPlacement[currentEnemy-1] = enemyMovement.GetPosGrid();
+            EnemyMovement enemyMovement = enemies[i].GetComponent<EnemyMovement>();
+            await enemyMovement.Action();
+            enemiesPlacement[i] = enemyMovement.GetPosGrid();
         }
-        if(currentEnemy < enemies.Count)
-        {
-            enemyMovement = enemies[currentEnemy].GetComponent<EnemyMovement>();
-            StartCoroutine(enemyMovement.Action());
-        }
-        else
-        {
-            GameManager.Instance.OnPTB();
-        }
-        currentEnemy++;
     }
 
     public EnemyMovement GetEnemyByGrid(Vector3Int vector)
     {
         for(int i = 0; i < enemies.Count; i++)
         {
-            enemyMovement = enemies[i].GetComponent<EnemyMovement> ();
+            EnemyMovement enemyMovement = enemies[i].GetComponent<EnemyMovement> ();
             if(enemyMovement.GetPosGrid() == vector)
             {
                 return enemyMovement;
@@ -85,7 +74,7 @@ public class EnemyManager : MonoBehaviour
     {
         for(int i = 0; i < enemies.Count; i++)
         {
-            enemyMovement = enemies[i].GetComponent<EnemyMovement> ();
+            EnemyMovement enemyMovement = enemies[i].GetComponent<EnemyMovement> ();
             if(enemyMovement.GetPosGrid() == gridPos)
             {
                 Destroy(enemies[i]);

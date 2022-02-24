@@ -19,8 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 coorPosition;
     private SpriteRenderer _rend;
     private List<Vector3Int> route;
-    private int routeCounter;
-    private bool canMove;
+    private bool canMove = false;
     private bool isMoving = false;
     private bool done = false;
 
@@ -61,6 +60,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void GameManagerOnPTM() {
         canMove = true;
+        isMoving = false;
     }
 
     private void GameManagerOnPTE() {
@@ -86,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
-    void Update()
+    async void Update()
     {
         if (canMove && !isMoving)
         {
@@ -98,52 +98,26 @@ public class PlayerMovement : MonoBehaviour
                 EnemyMovement enemy = enemyManager.GetEnemyByGrid(gridPos);
                 if(gridPos == tileManager.getPositionGrid(transform.position))
                 {
-                    energy--;
-                    done = true;
-                    if (energy <= 0)
-                    {
-                        GameManager.Instance.OnPTE ();
-                    }
+                    GameManager.Instance.OnPTE();
                 }
                 if(enemy != null && !done)
                 {
                     if(tileManager.GetNeigbours(transform.position).Contains(gridPos))
                     {
-                        StartCoroutine(Attack(enemy));
+                        await Attack(enemy);
                     }
                     else if(rangeManager.IsReachable(targetPos) && !done)
                     {
-                        Move(gridPos, true);
-                        StartCoroutine(Attack(enemy));
+                        await Move(gridPos, true);
+                        await Attack(enemy);
                     }
                 }
                 if (tileManager.isWalkable(targetPos) && rangeManager.IsReachable(targetPos) && !done)
                 {
-                    Move(gridPos, false);
+                    await Move(gridPos, false);
                 }
             }
         }
-
-        if(isMoving)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, tileManager.ToPix(route[routeCounter]), 4f * Time.deltaTime);
-            if (transform.position == tileManager.ToPix(route[routeCounter]))
-            {
-                routeCounter++;
-            }
-            if (transform.position == tileManager.ToPix(route[route.Count-1]))
-            {
-                isMoving=false;
-                startPosition = tileManager.getPositionGrid(transform.position);
-                coorPosition = transform.position;
-                GameManager.Instance.OnMove();
-                if (energy <= 0)
-                {
-                    GameManager.Instance.OnPTE ();
-                }
-            }
-        }
-
         if (Input.GetKeyDown (KeyCode.Space))
         {
             int a = Random.Range (15, 35);
@@ -151,8 +125,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void Move(Vector3Int gridPos, bool reduced)
+    private async Task Move(Vector3Int gridPos, bool reduced)
     {
+        isMoving = true;
         route = tileManager.CalculateRoute (tileManager.getPositionGrid (transform.position), gridPos);
         route.Reverse();
         if(reduced)
@@ -162,26 +137,35 @@ public class PlayerMovement : MonoBehaviour
         int dist = route.Count;
         //Debug.Log ("dist = " + dist);
         energy -= dist;
-        routeCounter = 0;
-        isMoving = true;
+        for(int i=0; i < route.Count; i++)
+        {
+            while(await MoveAnimation(tileManager.ToPix(route[i])));
+            startPosition = tileManager.getPositionGrid(transform.position);
+            coorPosition = transform.position;
+        }
+        GameManager.Instance.OnMove();
+        isMoving = false;
+        if (energy <= 0)
+        {
+            GameManager.Instance.OnPTE ();
+        }
     }
-    private IEnumerator Attack(EnemyMovement enemy)
+    private async Task Attack(EnemyMovement enemy)
     {
+        isMoving = true;
         Debug.Log (enemy.GetPosGrid ());
         done = true;
-        yield return new WaitUntil(() => isMoving == false);
         if(energy >= attackEnergy)
         {
             energy -= attackEnergy;
-            AttackAnimation(enemy);
-            enemy.TakeDamage(attackDamage);
+            await AttackAnimation(enemy);
             GameManager.Instance.OnMove(); //GameManager.Instance.OnAttack();
+            isMoving = false;
             if (energy == 0)
             {
-                GameManager.Instance.OnPTE ();
+                GameManager.Instance.OnPTE();
             }
         }
-        
     }
 
     private async Task<bool> MoveAnimation(Vector3 goal)
@@ -198,11 +182,12 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private async void AttackAnimation(EnemyMovement enemy)
+    private async Task AttackAnimation(EnemyMovement enemy)
     { 
         var pos = transform.position;
         var goal = tileManager.CalculateMiddle(tileManager.ToPix(enemy.GetPosGrid()), pos);
         while(await MoveAnimation(goal));
+        enemy.TakeDamage(attackDamage);
         while(await MoveAnimation(pos));
     }
 

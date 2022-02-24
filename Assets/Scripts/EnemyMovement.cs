@@ -19,8 +19,6 @@ public class EnemyMovement : MonoBehaviour
     private EnemyManager enemyManager;
     private SpriteRenderer _rend;
     private List<Vector3Int> route;
-    private bool canMove = false;
-    private bool isMoving = false;
 
 
     // Start is called before the first frame update
@@ -39,64 +37,46 @@ public class EnemyMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (canMove && !isMoving)
+
+    }
+
+    private async Task Move(int distance = 1)
+    {
+        for(int i=0; i<distance; i++)
         {
-            if(tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) > attackRange)
+             if(energy >= moveEnergy && tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) > 1)
             {
-                Move();
+                while(await MoveAnimation(tileManager.ToPix(route[i])));
+                energy -= moveEnergy;
             }
             else
             {
-                Attack();
-            }
-        }
-
-        if (isMoving)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, tileManager.ToPix(route[0]), 4f * Time.deltaTime);
-            if (transform.position == tileManager.ToPix(route[0]))
-            {
-                isMoving = false;
-                if(energy <= 0)
-                {
-                    canMove = false;
-                }
+                break;
             }
         }
     }
-
-    private void Move()
-    {
-        route = tileManager.CalculateRoute (tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position));
-        route.Reverse();
-        if(energy >= moveEnergy && tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) > 1)
-        {
-            isMoving = true;
-            energy -= moveEnergy;
-        }
-        else
-        {
-            canMove = false;
-        }
-    }
-    private void Attack()
+    private async Task Attack()
     {
         if(energy >= attackEnergy){
             if(attackRange == 1)
             {
                 AttackAnimationMelee();
             }
-            playerMovement.TakeDamage(attackDamage);
+            else
+            {
+                playerMovement.TakeDamage(attackDamage);
+            }
             energy -= attackEnergy;
             if (energy <= 0)
             {
-                isMoving = false;
-                canMove = false;
+                return;
             }
         }
         else
         {
-            Move();
+            route = tileManager.CalculateRoute (tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position));
+            route.Reverse();
+            await Move((int)(energy/moveEnergy));
         }
     }
 
@@ -119,6 +99,7 @@ public class EnemyMovement : MonoBehaviour
         var pos = transform.position;
         var goal = tileManager.CalculateMiddle(tileManager.ToPix(playerMovement.GetPosGrid()), pos);
         while(await MoveAnimation(goal));
+        playerMovement.TakeDamage(attackDamage);
         while(await MoveAnimation(pos));
     }
 
@@ -130,12 +111,20 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    public IEnumerator Action()
+    public async Task Action()
     {
         energy = maxEnergy;
-        canMove = true;
-        yield return new WaitUntil(() => canMove == false);
-        enemyManager.NextEnemyMove();
+        route = tileManager.CalculateRoute (tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position));
+        route.Reverse();
+        var distToMove = tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) - attackRange;
+        if(distToMove > 0)
+        {
+            await Move(distToMove);
+        }
+        else
+        {
+            await Attack();
+        }
     }
 
     public Vector3Int GetPosGrid()
