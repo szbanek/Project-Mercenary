@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
+using Random = UnityEngine.Random;
+
 //TODO: range detection
 // Aliens should be under the canvas
 // Chceck if tile is occupied
@@ -15,6 +17,7 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private int energy;
     [SerializeField] private int maxHealth = 20;
     [SerializeField] private int currentHealth;
+    [SerializeField] private int visibilityRange = 1;
     private GameObject player;
     private PlayerMovement playerMovement;
     private TileManager tileManager;
@@ -42,8 +45,13 @@ public class EnemyMovement : MonoBehaviour
 
     }
 
-    private async Task Move(int distance = 1)
-    {
+    void OnDestroy() {
+        Debug.Log ("destroyed");
+        tileManager.SetOcupied (tileManager.getPositionGrid (transform.position), false);
+    }
+
+    private async Task Move(int distance = 1) {
+        tileManager.SetOcupied (tileManager.getPositionGrid (transform.position), false);
         for(int i=0; i<distance; i++)
         {
              if(energy >= moveEnergy && tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) > 1)
@@ -56,7 +64,23 @@ public class EnemyMovement : MonoBehaviour
                 break;
             }
         }
+        tileManager.SetOcupied (tileManager.getPositionGrid (transform.position), true);
     }
+
+    private List <Vector3Int >  GetRandomPath(int distance) {
+        List <Vector3Int > route = new List<Vector3Int> ();
+        while (route.Count < distance)
+        {
+            var newPos = tileManager.GetGivenNeighbour (GetPosGrid (),Random.Range (0, 6));
+            if (tileManager.isWalkable (newPos) && tileManager.IsOcupied (newPos) && !route.Contains (newPos))
+            {
+                route.Add (newPos);
+            }
+        }
+
+        return route;
+    }
+    
     private async Task Attack()
     {
         if(energy >= attackEnergy){
@@ -116,9 +140,19 @@ public class EnemyMovement : MonoBehaviour
     public async Task Action()
     {
         energy = maxEnergy;
-        route = tileManager.CalculateRoute (tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position));
-        route.Reverse();
-        var distToMove = tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) - attackRange;
+        var selfPos = tileManager.getPositionGrid (transform.position);
+        var distToPlayer = tileManager.getDistance (selfPos, tileManager.getPositionGrid (player.transform.position));
+        //check if player is visible
+        if (distToPlayer <= visibilityRange)
+        {
+            route = tileManager.CalculateRoute (selfPos, tileManager.getPositionGrid(player.transform.position));
+            route.Reverse();
+        }
+        else
+        {
+            route = GetRandomPath(energy);
+        }
+        var distToMove = tileManager.getDistance(selfPos, tileManager.getPositionGrid(player.transform.position)) - attackRange;
         if(distToMove > 0)
         {
             await Move(distToMove);
@@ -127,6 +161,9 @@ public class EnemyMovement : MonoBehaviour
         {
             await Attack();
         }
+        
+        
+        
     }
 
     public Vector3Int GetPosGrid()

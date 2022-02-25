@@ -18,24 +18,29 @@ public class EnemyManager : MonoBehaviour
     {
         tileManager = FindObjectOfType<TileManager>();
         scoreManager = FindObjectOfType<ScoreManager>();
-        Create(0, new Vector3Int(1, 1, 0));
-        Create(1, new Vector3Int(-1, 1, 0));
     }
 
     void Awake()
     {
-
         GameManager.Enemy += GameManagerOnEnemy;
+        GameManager.MapReady += GameManagerOnMapReady;
     }
 
     void OnDestroy()
     {
         GameManager.Enemy -= GameManagerOnEnemy;
+        GameManager.MapReady -= GameManagerOnMapReady;
     }
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public void GameManagerOnMapReady() {
+        Create(0, new Vector3Int(1, 1, 0));
+        Create(1, new Vector3Int(-1, 1, 0));
+        GameManager.Instance.OnPTB ();
     }
 
     public async void GameManagerOnEnemy()
@@ -71,6 +76,7 @@ public class EnemyManager : MonoBehaviour
     {
         enemies.Add(Instantiate(prefabs[type], tileManager.ToPix(vector), Quaternion.identity));
         enemiesPlacement.Add(vector);
+        tileManager.SetOcupied (vector, true);
     }
     public void Destroy(Vector3Int gridPos)
     {

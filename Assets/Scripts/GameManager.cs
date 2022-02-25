@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public static event Action Lose;
     public static event Action<int> Hurt;
     public static event Action Move;
+    public static event Action MapReady;
 
     void Awake()
     {
@@ -28,8 +29,10 @@ public class GameManager : MonoBehaviour
     {
         //UpdateGameState(GameState.PlayerTurnBeg);
     }
-    
 
+    public void OnMapReady() {
+        MapReady?.Invoke ();
+    }
     public void OnMove() {
         Move?.Invoke ();
     }

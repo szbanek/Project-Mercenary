@@ -23,15 +23,18 @@ public class TileManager : MonoBehaviour
     [SerializeField] private int[] _walkLength = {10, 20};
     [SerializeField] private int[] _iterations = {50, 150};
     [SerializeField] [Range(0,100)]private int _corridorPercentage = 20;
+    
     private Dictionary<TileBase, TileData> dataFromTiles;
     private int[,,] _neighbours = {{{1, 0}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}}, {{1, 0}, {1, 1}, {0, 1}, {-1, 0}, {0, -1}, {1, -1}}};
     private List<Vector3Int> _cubeDirections = new List<Vector3Int> () {
     new Vector3Int (0,-1,1), new Vector3Int (1, -1, 0), new Vector3Int (1, 0, -1),
     new Vector3Int(0,1,-1),new Vector3Int (-1,1,0), new Vector3Int (-1,0,1)};
+
+    private List<Vector3Int> _ocupied;
     void Start()
     {
         GenerateMap(_numOfRooms, _dist);
-        GameManager.Instance.OnPTB ();
+        GameManager.Instance.OnMapReady ();
     }
     void OnDestroy() {
         map.ClearAllTiles ();
@@ -40,6 +43,7 @@ public class TileManager : MonoBehaviour
     private void Awake()
     {
         dataFromTiles = new Dictionary<TileBase, TileData>();
+        _ocupied = new List<Vector3Int> ();
         foreach (var tileData in tileDatas)
         {
             foreach (var tile in tileData.tiles)
@@ -66,6 +70,21 @@ public class TileManager : MonoBehaviour
     {
         Vector3Int gridPos = map.WorldToCell(pos);
         return isWalkable (gridPos);
+    }
+
+    public bool IsOcupied(Vector3Int gridPos) {
+        return _ocupied.Contains (gridPos);
+    }
+
+    public void SetOcupied(Vector3Int gridPos, bool state) {
+        if (state)
+        {
+            _ocupied.Add (gridPos);
+        }
+        else
+        {
+            _ocupied.Remove (gridPos);
+        }
     }
 
     public bool isWalkable(Vector3Int gridPos) {
@@ -220,7 +239,7 @@ public class TileManager : MonoBehaviour
         return res;
     }
 
-    Vector3Int GetGivenNeighbour(Vector3Int pos, int num) {
+    public Vector3Int GetGivenNeighbour(Vector3Int pos, int num) {
         int parity = Math.Abs(pos.y) % 2;
         return new Vector3Int (pos.x + _neighbours[parity, num, 0], pos.y + _neighbours[parity, num, 1], 0);
     }
@@ -270,7 +289,7 @@ public class TileManager : MonoBehaviour
                 var nei = GetNeigbours (current.Item1);
                 foreach (var n in nei)
                 {
-                    if (isWalkable (n) && !porcessed.Contains (n))
+                    if (isWalkable (n) && !porcessed.Contains (n) && !IsOcupied (n))
                     {
                         bool isIn = false;
                         foreach (var v in toSearch)
