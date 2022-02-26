@@ -12,10 +12,13 @@ public class RightPanleManager : MonoBehaviour
     [SerializeField] private Canvas _canvas;
     [SerializeField] private Sprite _energyOrb;
     [SerializeField] private Sprite _lifeOrb;
+    private float _UIwidth, _UIheight, _panelWidth;
     private bool _playerTurn = true;
-    private float _energyBarX = 360.6f;
-    private float _lifeBarX = 302.42f;
-    private float _energyBarY = -190f;
+    private float _energyBarX;
+    private float _lifeBarX;
+    private float _energyBarY;
+    private float _offset = 10.0f;
+    private float _imageSize = 40.0f;
     private List<GameObject> _energyList;
     private List<GameObject> _lifeList;
 
@@ -25,6 +28,19 @@ public class RightPanleManager : MonoBehaviour
         _energyList = new List<GameObject>();
         _lifeList = new List<GameObject> ();
         _loseButton.gameObject.SetActive (false);
+        RectTransform tr = _canvas.GetComponent<RectTransform>();
+        _UIwidth = tr.rect.width;
+        _UIheight = tr.rect.height;
+        tr = gameObject.GetComponent<RectTransform>();
+        _panelWidth = tr.rect.width;
+        tr = _endTurnButton.GetComponent<RectTransform>();
+        var buttonCenter = tr.rect.yMax;
+        float buttonWidth = tr.rect.width;
+        float buttonHeight = tr.rect.height;
+        Debug.Log (buttonCenter);
+        _energyBarY = -0.5f*_UIheight + buttonCenter + buttonHeight/2 + _offset + _imageSize/2;
+        _lifeBarX = _UIwidth / 2 - _panelWidth + _offset+ _imageSize/2;
+        _energyBarX = _lifeBarX + _imageSize + _offset;
         SetLife ();
     }
     void Awake()
@@ -36,8 +52,6 @@ public class RightPanleManager : MonoBehaviour
         GameManager.UIOff += GameManagerOnUIOff;
         GameManager.Hurt += GameManagerOnHurt;
         GameManager.Lose += GameManagerOnLose;
-
-
     }
 
     void OnDestroy()
@@ -82,16 +96,14 @@ public class RightPanleManager : MonoBehaviour
 
     private void SetLife() {
         int life = _player.GetHealth ();
-        float offset = 10.0f;
-        float imageSize = 40.0f;
         for (int i = 0; i < life/40; i ++)
         {
             GameObject newEP = new GameObject ("LifePoint_" + i);
             RectTransform trans = newEP.AddComponent<RectTransform>();
             trans.transform.SetParent(_canvas.transform); // setting parent
             trans.localScale = Vector3.one;
-            trans.anchoredPosition3D = new Vector3(_lifeBarX,_energyBarY+(i*(imageSize+offset)),0); // setting position, will be on center
-            trans.sizeDelta= new Vector2(imageSize, imageSize); // custom size
+            trans.anchoredPosition3D = new Vector3(_lifeBarX,_energyBarY+(i*(_imageSize+_offset)),0); // setting position, will be on center
+            trans.sizeDelta= new Vector2(_imageSize, _imageSize); // custom size
             Image image = newEP.AddComponent<Image>();
             image.sprite = _lifeOrb;
             newEP.transform.SetParent(_canvas.transform);
@@ -110,16 +122,14 @@ public class RightPanleManager : MonoBehaviour
                     Destroy(obj);
                 }
                 _energyList.Clear ();
-                float offset = 10.0f;
-                float imageSize = 40.0f;
                 for (int i = 0; i < energy; i ++)
                 {
                     GameObject newEP = new GameObject ("EnergyPoint_" + i);
                     RectTransform trans = newEP.AddComponent<RectTransform>();
                     trans.transform.SetParent(_canvas.transform); // setting parent
                     trans.localScale = Vector3.one;
-                    trans.anchoredPosition3D = new Vector3(_energyBarX,_energyBarY+(i*(imageSize+offset)),0); // setting position, will be on center
-                    trans.sizeDelta= new Vector2(imageSize, imageSize); // custom size
+                    trans.anchoredPosition3D = new Vector3(_energyBarX,_energyBarY+(i*(_imageSize+_offset)),0); // setting position, will be on center
+                    trans.sizeDelta= new Vector2(_imageSize, _imageSize); // custom size
     
                     Image image = newEP.AddComponent<Image>();
                     image.sprite = _energyOrb;
@@ -129,8 +139,6 @@ public class RightPanleManager : MonoBehaviour
                     _energyList.Add (newEP);
                 }
             }
-            
-            
         }
     }
 
