@@ -9,7 +9,7 @@ public class RangeManager : MonoBehaviour
     private EnemyManager enemyManager; //GetEnemiesPlaement() daje liste z położeniem przeciwników
     public Tilemap mainMap;
     public Tilemap selfMap;
-    [SerializeField] private TileBase Highlight;
+    [SerializeField] private TileBase _highlight;
     private List<Vector3Int> _reachable;
 
     public PlayerMovement player;
@@ -45,73 +45,10 @@ public class RangeManager : MonoBehaviour
         
     }
 
-
     private void SetRangeMap() {
-        Vector3 pos = tileManager.ToCube (player.GetPosGrid ());
-
-        for (int x = mainMap.cellBounds.min.x; x < mainMap.cellBounds.max.x; x ++)
+        foreach (var tile in _reachable)
         {
-            for (int y = mainMap.cellBounds.min.y; y < mainMap.cellBounds.max.y; y ++)
-            {
-                Vector3Int coordinates = new Vector3Int (x, y, 0);
-                if (_reachable.Contains (coordinates))
-                {
-                    selfMap.SetTile (coordinates, Highlight);
-                }
-                else
-                {
-                    selfMap.SetTile (coordinates, null);
-                }
-            }
-        }
-    }
-
-    private void GenerateRangeMap() {
-        _reachable.Clear ();
-        int range = player.GetEnergy ();
-        Vector3 pos = tileManager.ToCube (player.GetPosGrid ());
-
-        for (int x = mainMap.cellBounds.min.x; x < mainMap.cellBounds.max.x; x ++)
-        {
-            for (int y = mainMap.cellBounds.min.y; y < mainMap.cellBounds.max.y; y ++)
-            {
-                Vector3Int coordinates = new Vector3Int (x, y, 0);
-                TileBase tile = mainMap.GetTile (coordinates);
-                if (tile != null)
-                {
-                    Vector3 tilePos = tileManager.ToCube (coordinates);
-                    if (-range <= (tilePos.x - pos.x) && (tilePos.x - pos.x) <= range)
-                    {
-                        if (-range <= (tilePos.y - pos.y) && (tilePos.y - pos.y) <= range)
-                        {
-                            if (-range <= (tilePos.z - pos.z) && (tilePos.z - pos.z) <= range)
-                            {
-                                if (tilePos.x - pos.x + tilePos.y - pos.y + tilePos.z - pos.z == 0)
-                                {
-                                    selfMap.SetTile (coordinates, Highlight);
-                                    _reachable.Add (coordinates);
-                                }
-                                else
-                                {
-                                    selfMap.SetTile (coordinates, null);
-                                }
-                            }
-                            else
-                            {
-                                selfMap.SetTile (coordinates, null);
-                            }
-                        }
-                        else
-                        {
-                            selfMap.SetTile (coordinates, null);
-                        }
-                    }
-                    else
-                    {
-                        selfMap.SetTile (coordinates, null);
-                    }
-                }
-            }
+            selfMap.SetTile (tile, _highlight);
         }
     }
 
@@ -130,8 +67,10 @@ public class RangeManager : MonoBehaviour
     }
 
     private void GetReachableList(int range) {
+        selfMap.ClearAllTiles ();
         _reachable.Clear();
         Vector3Int start = player.GetPosGrid ();
+        var enemies = new List<Vector3Int> ();
         _reachable.Add (start);
         List<List<Vector3Int>> fringes = new List<List<Vector3Int>> ();
         fringes.Add (new List<Vector3Int> {start});
@@ -145,10 +84,32 @@ public class RangeManager : MonoBehaviour
                 {
                     if (!_reachable.Contains (neighbour) && tileManager.isWalkable (neighbour))
                     {
-                        _reachable.Add (neighbour);
-                        fringes[k].Add (neighbour);
+                        if (tileManager.IsOcupied ((neighbour)))
+                        {
+                            if (!enemies.Contains (neighbour))
+                            {
+                                enemies.Add (neighbour);
+                            }
+                        }
+                        else
+                        {
+                            _reachable.Add (neighbour);
+                            fringes[k].Add (neighbour);
+                        }
+                        
                     }
                 }
+            }
+        }
+
+        foreach (var enemy in enemies)
+        {
+            tileManager.SetOcupied (enemy, false);
+            var route = tileManager.CalculateRoute (start, enemy);
+            tileManager.SetOcupied (enemy, true);
+            if (route.Count <= range)
+            {
+                _reachable.Add (enemy);
             }
         }
     }

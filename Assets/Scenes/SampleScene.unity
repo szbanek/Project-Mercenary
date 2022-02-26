@@ -609,7 +609,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMap: {fileID: 1863539237}
   selfMap: {fileID: 911656752}
-  Highlight: {fileID: 11400000, guid: 7ced6ea0289c2324293f59abfee18b51, type: 2}
+  _highlight: {fileID: 11400000, guid: 7ced6ea0289c2324293f59abfee18b51, type: 2}
   player: {fileID: 1353410784}
 --- !u!483693784 &911656751
 TilemapRenderer:

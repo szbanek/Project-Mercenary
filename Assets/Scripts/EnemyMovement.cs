@@ -72,7 +72,7 @@ public class EnemyMovement : MonoBehaviour
         while (route.Count < distance)
         {
             var newPos = tileManager.GetGivenNeighbour (GetPosGrid (),Random.Range (0, 6));
-            if (tileManager.isWalkable (newPos) && tileManager.IsOcupied (newPos) && !route.Contains (newPos))
+            if (tileManager.isWalkable (newPos) && !tileManager.IsOcupied (newPos) && !route.Contains (newPos))
             {
                 route.Add (newPos);
             }
