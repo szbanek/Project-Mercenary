@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
     {
         //UpdateGameState(GameState.PlayerTurnBeg);
     }
-
+    
     public void OnMapReady() {
         MapReady?.Invoke ();
     }

@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private int maxEnergy;
     [SerializeField] private int attackEnergy = 1;
+    [SerializeField] private ProgressBar _gameProgressBar;
     private int energy;
     private int _health = 120;
     [SerializeField] private int attackDamage = 30;
@@ -20,6 +21,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 coorPosition;
     private SpriteRenderer _rend;
     private List<Vector3Int> route;
+    private List<Vector3Int> _visitedHubs;
+    private int _hubsCount;
     private bool canMove = false;
     private bool isMoving = false;
     private bool done = false;
@@ -42,6 +45,7 @@ public class PlayerMovement : MonoBehaviour
         GameManager.PlayerTurnBegin += GameManagerOnPTB;
         GameManager.PlayerTurnMain += GameManagerOnPTM;
         GameManager.PlayerTurnEnd += GameManagerOnPTE;
+        GameManager.MapReady += GameManagerOnMapReady;
     }
 
     void OnDestroy()
@@ -50,6 +54,13 @@ public class PlayerMovement : MonoBehaviour
         GameManager.PlayerTurnBegin -= GameManagerOnPTB;
         GameManager.PlayerTurnMain -= GameManagerOnPTM;
         GameManager.PlayerTurnEnd -= GameManagerOnPTE;
+        GameManager.MapReady -= GameManagerOnMapReady;
+    }
+
+    private void GameManagerOnMapReady() {
+        _hubsCount = tileManager.GetNumOfRooms ();
+        _gameProgressBar.SetMax (_hubsCount);
+        _gameProgressBar.SetValue (0);
     }
 
     private void GameManagerOnPTB() {
@@ -67,6 +78,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void GameManagerOnPTE() {
         GameManager.Instance.OnEnemy ();
+    }
+
+    private void UpdateGameProgress() {
+        _gameProgressBar.SetValue(_visitedHubs.Count);
     }
 
 
@@ -110,7 +125,9 @@ public class PlayerMovement : MonoBehaviour
                     }
                     else if(rangeManager.IsReachable(targetPos) && !done)
                     {
+                        tileManager.SetOcupied (gridPos, false);
                         await Move(gridPos, true);
+                        tileManager.SetOcupied (gridPos, true);
                         await Attack(enemy);
                     }
                 }
@@ -137,7 +154,6 @@ public class PlayerMovement : MonoBehaviour
             route.RemoveAt(route.Count - 1);
         }
         int dist = route.Count;
-        //Debug.Log ("dist = " + dist);
         energy -= dist;
         scoreManager.ChangeScore(-dist); //distance traveled
         for(int i=0; i < route.Count; i++)

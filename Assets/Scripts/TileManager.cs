@@ -66,6 +66,10 @@ public class TileManager : MonoBehaviour
         
     }
 
+    public int GetNumOfRooms() {
+        return _numOfRooms;
+    }
+
     public bool isWalkable(Vector2 pos)
     {
         Vector3Int gridPos = map.WorldToCell(pos);
@@ -276,12 +280,6 @@ public class TileManager : MonoBehaviour
                         path.Add (currentPathTile);
                         currentPathTile = connections[currentPathTile];
                     }
-
-                    // foreach (var step in path)
-                    // {
-                    //     Debug.Log (step);
-                    // }
-
                     return path;
                 }
                 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class RightPanleManager : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class RightPanleManager : MonoBehaviour
     [SerializeField] private Canvas _canvas;
     [SerializeField] private Sprite _energyOrb;
     [SerializeField] private Sprite _lifeOrb;
+    [SerializeField] private TMP_Text _scoreText;
+    [SerializeField] private ScoreManager _scoreManager;
     private float _UIwidth, _UIheight, _panelWidth;
     private bool _playerTurn = true;
     private float _energyBarX;
@@ -21,10 +24,12 @@ public class RightPanleManager : MonoBehaviour
     private float _imageSize = 40.0f;
     private List<GameObject> _energyList;
     private List<GameObject> _lifeList;
+    
 
 
 
     void Start() {
+       
         _energyList = new List<GameObject>();
         _lifeList = new List<GameObject> ();
         _loseButton.gameObject.SetActive (false);
@@ -66,6 +71,7 @@ public class RightPanleManager : MonoBehaviour
     }
 
     void Update() {
+        _scoreText.text = Convert.ToString( _scoreManager.GetScore ());
         SetEnergyPoints ();
     }
 

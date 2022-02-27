@@ -29,4 +29,8 @@ public class ScoreManager : MonoBehaviour
         //graphics
         //Debug.Log("Score = " + score);
     }
+
+    public int GetScore() {
+        return score;
+    }
 }
