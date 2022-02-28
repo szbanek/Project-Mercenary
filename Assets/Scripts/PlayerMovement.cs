@@ -27,12 +27,12 @@ public class PlayerMovement : MonoBehaviour
     private bool isMoving = false;
     private bool done = false;
 
-    
-    
+
     void Start()
     {
         energy = maxEnergy;
         _rend = this.gameObject.GetComponent<SpriteRenderer> ();
+        _visitedHubs = new List<Vector3Int> ();
     }
     void Awake()
     {
@@ -68,7 +68,15 @@ public class PlayerMovement : MonoBehaviour
         energy = maxEnergy+tileManager.getMovementModifier(startPosition);
         canMove = false;
         GameManager.Instance.OnPTM ();
-        
+        var actTile = tileManager.GetTileType (startPosition);
+        if (actTile.name == "TileHub")
+        {
+            if (!_visitedHubs.Contains (startPosition))
+            {
+                _visitedHubs.Add (startPosition);
+            }
+        }
+        UpdateGameProgress ();
     }
 
     private void GameManagerOnPTM() {

@@ -52,6 +52,11 @@ public class TileManager : MonoBehaviour
             }
         }
     }
+
+    public TileData GetTileType(Vector3Int pos) {
+        TileBase tile = map.GetTile (pos);
+        return dataFromTiles[tile];
+    }
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -61,9 +66,8 @@ public class TileManager : MonoBehaviour
             Vector3Int gridPos = map.WorldToCell(mPos);
             TileBase tile = map.GetTile(gridPos);
             bool walkable = dataFromTiles[tile].walkable;
-            //Debug.Log("Clicked at: " + ToCube(gridPos) + "; walkable: " + walkable);
+            Debug.Log("Clicked at: " + dataFromTiles[tile]);
         }
-        
     }
 
     public int GetNumOfRooms() {
@@ -90,6 +94,7 @@ public class TileManager : MonoBehaviour
             _ocupied.Remove (gridPos);
         }
     }
+    
 
     public bool isWalkable(Vector3Int gridPos) {
         TileBase tile = map.GetTile(gridPos);
