@@ -105,3 +105,5 @@ MonoBehaviour:
   energy: 0
   maxHealth: 20
   currentHealth: 20
+  visibilityRange: 1
+  attackBallPrefab: {fileID: 7101782336004697689, guid: 3374110ad7f66074ebfd6fe71dec43d5, type: 3}
