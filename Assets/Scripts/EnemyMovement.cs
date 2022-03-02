@@ -17,6 +17,7 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private int maxHealth = 20;
     [SerializeField] private int currentHealth;
     [SerializeField] private int visibilityRange = 1;
+    [SerializeField] private GameObject attackBallPrefab;
     private GameObject player;
     private PlayerMovement playerMovement;
     private TileManager tileManager;
@@ -89,7 +90,7 @@ public class EnemyMovement : MonoBehaviour
             }
             else
             {
-                playerMovement.TakeDamage(attackDamage);
+                AttackAnimationRange();
             }
             energy -= attackEnergy;
             if (energy <= 0)
@@ -126,6 +127,21 @@ public class EnemyMovement : MonoBehaviour
         while(await MoveAnimation(goal));
         playerMovement.TakeDamage(attackDamage);
         while(await MoveAnimation(pos));
+    }
+
+    private async void AttackAnimationRange()
+    {
+        Vector3 targ = player.transform.position;
+        targ.z = 0f;
+        targ.x = transform.position.x - targ.x;
+        targ.y = transform.position.y - targ.y;
+        float angle = Mathf.Atan2(targ.y, targ.x) * Mathf.Rad2Deg;
+
+        GameObject bullet = Instantiate(attackBallPrefab, transform.position, Quaternion.Euler(new Vector3(0, 0, angle)));
+        AttackBall attackBall = bullet.GetComponent<AttackBall>();
+        await attackBall.SetTarget(player.transform.position);
+        Destroy(bullet);
+        playerMovement.TakeDamage(attackDamage);
     }
 
     public void TakeDamage(int damage) {
