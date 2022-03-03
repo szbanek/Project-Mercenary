@@ -17,3 +17,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dd33e42467c7a7f4eacea961b144d125, type: 2}
   walkable: 0
   movementModifier: 0
+  seeThrough: 0
+  visible: 0

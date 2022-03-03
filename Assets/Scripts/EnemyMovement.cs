@@ -16,7 +16,7 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private int energy;
     [SerializeField] private int maxHealth = 20;
     [SerializeField] private int currentHealth;
-    [SerializeField] private int visibilityRange = 1;
+    [SerializeField] private int visibilityRange = 3; // don't set over 6
     [SerializeField] private GameObject attackBallPrefab;
     private GameObject player;
     private PlayerMovement playerMovement;
@@ -156,18 +156,25 @@ public class EnemyMovement : MonoBehaviour
     {
         energy = maxEnergy;
         var selfPos = tileManager.getPositionGrid (transform.position);
-        var distToPlayer = tileManager.getDistance (selfPos, tileManager.getPositionGrid (player.transform.position));
+        var playerPos = tileManager.getPositionGrid (player.transform.position);
+        var distToPlayer = tileManager.getDistance (selfPos, playerPos);
+        int distToMove = distToPlayer;
+        bool canAttack = tileManager.CanSee (selfPos, playerPos);
         //check if player is visible
-        if (distToPlayer <= visibilityRange)
+        if (distToPlayer <= visibilityRange && canAttack)
         {
-            route = tileManager.CalculateRoute (selfPos, tileManager.getPositionGrid(player.transform.position));
+            route = tileManager.CalculateRoute (selfPos, playerPos);
             route.Reverse();
         }
         else
         {
             route = GetRandomPath(energy);
         }
-        var distToMove = tileManager.getDistance(selfPos, tileManager.getPositionGrid(player.transform.position)) - attackRange;
+
+        if (canAttack)
+        {
+            distToMove= distToPlayer - attackRange;
+        }
         if(distToMove > 0)
         {
             await Move(distToMove);
@@ -176,9 +183,6 @@ public class EnemyMovement : MonoBehaviour
         {
             await Attack();
         }
-        
-        
-        
     }
 
     public Vector3Int GetPosGrid()

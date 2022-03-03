@@ -74,6 +74,16 @@ public class TileManager : MonoBehaviour
         return _numOfRooms;
     }
 
+    public bool IsVisible(Vector3Int gridPos) {
+        TileBase tile = map.GetTile(gridPos);
+        return dataFromTiles[tile].visible;
+    }
+
+    public bool IsSeeThrough(Vector3Int gridPos) {
+        TileBase tile = map.GetTile(gridPos);
+        return dataFromTiles[tile].seeThrough;
+    }
+
     public bool isWalkable(Vector2 pos)
     {
         Vector3Int gridPos = map.WorldToCell(pos);
@@ -566,6 +576,23 @@ public class TileManager : MonoBehaviour
             results.Add (ToOffset(CubeRound (CubeInterpolation (ToCube (start), ToCube(end), 1f / dist * i))));
         }
         return results;
+    }
+    
+    public bool CanSee(Vector3Int self, Vector3Int target) {
+        bool res = true;
+        if (IsVisible (target))
+        {
+            var lineOfVision = GenerateLine (self, target);
+            foreach (var tile in lineOfVision)
+            {
+                res = res && IsSeeThrough (tile);
+            }
+        }
+        else
+        {
+            res =  false;
+        }
+        return res;
     }
 
     private HashSet<Vector3Int> GenerateCorridor(Vector3Int start, Vector3Int end) {

@@ -8,9 +8,11 @@ public class TileData : ScriptableObject
 {
     public TileBase[] tiles;
 
-    public bool walkable;
+    public bool walkable = true;
 
-    public int movementModifier;
+    public int movementModifier = 0;
+    public bool seeThrough = true;
+    public bool visible = true; //true = character is visible
 
 }
 
