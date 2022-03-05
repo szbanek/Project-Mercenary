@@ -15,6 +15,7 @@ public class RightPanleManager : MonoBehaviour
     [SerializeField] private Sprite _lifeOrb;
     [SerializeField] private TMP_Text _scoreText;
     [SerializeField] private ScoreManager _scoreManager;
+    [SerializeField] private GameObject _progressPanel;
     private float _UIwidth, _UIheight, _panelWidth;
     private bool _playerTurn = true;
     private float _energyBarX;
@@ -42,7 +43,8 @@ public class RightPanleManager : MonoBehaviour
         var buttonCenter = tr.rect.yMax;
         float buttonWidth = tr.rect.width;
         float buttonHeight = tr.rect.height;
-        Debug.Log (buttonCenter);
+        _imageSize = 0.075f * _UIheight;
+        _offset = 0.25f * _imageSize;
         _energyBarY = -0.5f*_UIheight + buttonCenter + buttonHeight/2 + _offset + _imageSize/2;
         _lifeBarX = _UIwidth / 2 - _panelWidth + _offset+ _imageSize/2;
         _energyBarX = _lifeBarX + _imageSize + _offset;
