@@ -29,8 +29,9 @@ public class RightPanleManager : MonoBehaviour
 
 
 
-    void Start() {
-       
+    void Start(){
+        _endTurnButton.interactable = false;
+        _playerTurn = false;
         _energyList = new List<GameObject>();
         _lifeList = new List<GameObject> ();
         _loseButton.gameObject.SetActive (false);
@@ -166,11 +167,8 @@ public class RightPanleManager : MonoBehaviour
     private void GameManagerOnPTE() {}
     
 
-    public void GameManagerOnGameStateChanged(GameState state)
-    {
-        Debug.Log (state);
-        _endTurnButton.interactable = (state == GameState.PlayerTurnMain);
-        _playerTurn = (state == GameState.PlayerTurnMain);
+    public void GameManagerOnGameStateChanged(GameState state) {
+        _canvas.enabled = state == GameState.Game;
     }
     
     public void EndTurn()

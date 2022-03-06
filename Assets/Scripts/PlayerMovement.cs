@@ -93,23 +93,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    private void GameManagerOnGameStateChanged(GameState state)
-    {
-        if (state == GameState.PlayerTurnBeg)
-        {
-            startPosition = tileManager.getPositionGrid(transform.position);
-            energy = maxEnergy+tileManager.getMovementModifier(startPosition);
-            GameManager.Instance.UpdateGameState(GameState.PlayerTurnMain);
-        }
-        else
-        {
-            canMove = state == GameState.PlayerTurnMain;
-            if (state == GameState.PlayerTurnEnd)
-            {
-                //tu byłby kod na zbieranie bonusów, premie do zdrowia etc.
-                GameManager.Instance.UpdateGameState(GameState.EnemyTurnBeg);
-            }
-        }
+    private void GameManagerOnGameStateChanged(GameState state) {
     }
     async void Update()
     {

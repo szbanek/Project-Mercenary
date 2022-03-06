@@ -14,15 +14,17 @@ public class TileManager : MonoBehaviour
     private int height = 25;
     private float x_offset = 1.5f;
     private float y_offset = 0.435f;
-    
-    [SerializeField] private List<TileData> tileDatas;
-    [SerializeField] private List<TileBase> _tiles;
-    [SerializeField] private int[] _dist = {25,50};
-    [SerializeField] [Range (2, 15)] private int _numOfRooms = 5;
-    [SerializeField] private bool _startRandomly = true;
-    [SerializeField] private int[] _walkLength = {10, 20};
-    [SerializeField] private int[] _iterations = {50, 150};
-    [SerializeField] [Range(0,100)]private int _corridorPercentage = 20;
+
+    [SerializeField] private Grid _grid;
+    // [SerializeField] private List<TileData> tileDatas;
+    // [SerializeField] private List<TileBase> _tiles;
+    // [SerializeField] private int[] _dist = {25,50};
+    // [SerializeField] [Range (2, 15)] private int _numOfRooms = 5;
+    // [SerializeField] private bool _startRandomly = true;
+    // [SerializeField] private int[] _walkLength = {10, 20};
+    // [SerializeField] private int[] _iterations = {50, 150};
+    // [SerializeField] [Range(0,100)]private int _corridorPercentage = 20;
+    [SerializeField] private LevelData _data;
     
     private Dictionary<TileBase, TileData> dataFromTiles;
     private int[,,] _neighbours = {{{1, 0}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}}, {{1, 0}, {1, 1}, {0, 1}, {-1, 0}, {0, -1}, {1, -1}}};
@@ -33,24 +35,37 @@ public class TileManager : MonoBehaviour
     private List<Vector3Int> _ocupied;
     void Start()
     {
-        GenerateMap(_numOfRooms, _dist);
-        GameManager.Instance.OnMapReady ();
+        
     }
     void OnDestroy() {
+        GameManager.OnGameStateChange -= GameManagerOnGameStateChanged;
+        GameManager.NewMap -= GameManagerOnNewMap;
         map.ClearAllTiles ();
     }
     
     private void Awake()
     {
+        GameManager.OnGameStateChange += GameManagerOnGameStateChanged;
+        GameManager.NewMap += GameManagerOnNewMap;
         dataFromTiles = new Dictionary<TileBase, TileData>();
         _ocupied = new List<Vector3Int> ();
-        foreach (var tileData in tileDatas)
+        foreach (var tileData in _data.tileDatas)
         {
             foreach (var tile in tileData.tiles)
             {
                 dataFromTiles.Add(tile, tileData);
             }
         }
+    }
+
+    void GameManagerOnNewMap(LevelData lvl) {
+        _data = lvl;
+        GenerateMap ();
+        GameManager.Instance.OnMapReady ();
+    }
+
+    void GameManagerOnGameStateChanged(GameState state) {
+        _grid.enabled = state == GameState.Game;
     }
 
     public TileData GetTileType(Vector3Int pos) {
@@ -71,7 +86,7 @@ public class TileManager : MonoBehaviour
     }
 
     public int GetNumOfRooms() {
-        return _numOfRooms;
+        return _data.numOfRooms;
     }
 
     public bool IsVisible(Vector3Int gridPos) {
@@ -342,13 +357,13 @@ public class TileManager : MonoBehaviour
         return null;
     }
     
-    void GenerateMap(int numOfRooms, int[] distanceBetweenRooms) {
+    void GenerateMap() {
         List<Vector3Int> roomSeeds = new List<Vector3Int> ();
         roomSeeds.Add (new Vector3Int (0, 0, 0));
-        for (int i = 1; i < numOfRooms; i ++)
+        for (int i = 1; i < _data.numOfRooms; i ++)
         {
             int lim = roomSeeds.Count;
-            int rad = Random.Range (distanceBetweenRooms[0], distanceBetweenRooms[1]);
+            int rad = Random.Range (_data.distanceBetweenRooms[0], _data.distanceBetweenRooms[1]);
             var newSeed = GetRandomTileFromRing (roomSeeds[UnityEngine.Random.Range (0, roomSeeds.Count)], rad);
             roomSeeds.Add (newSeed);
         }
@@ -360,18 +375,18 @@ public class TileManager : MonoBehaviour
             {
                 dir[i] = UnityEngine.Random.Range (10, 100);
             }
-            GenerateRoomRandomWalk (tile, Random.Range (_iterations[0],_iterations[1]), Random.Range (_walkLength[0],_walkLength[1]), _startRandomly);
+            GenerateRoomRandomWalk (tile, Random.Range (_data.iterations[0],_data.iterations[1]), Random.Range (_data.walkLength[0],_data.walkLength[1]), _data.startRandomly);
         }
 
         var corridors = ConnectRooms (roomSeeds);
         foreach (var tile in corridors)
         {
-            map.SetTile (tile, _tiles[3]);
+            map.SetTile (tile, _data.tiles[3]);
         }
 
         foreach (var tile in roomSeeds)
         {
-            map.SetTile (tile, _tiles[2]);
+            map.SetTile (tile, _data.tiles[2]);
         }
         GenerateBoundries ();
     }
@@ -403,7 +418,7 @@ public class TileManager : MonoBehaviour
 
         foreach (var connection in connections)
         {
-            if (Random.Range (0, 100) < _corridorPercentage)
+            if (Random.Range (0, 100) < _data.corridorPercentage)
             {
                 HashSet<Vector3Int> newCorridor = GenerateCorridor (connection.Item1, connection.Item2);
                 corridors.UnionWith (newCorridor);
@@ -457,7 +472,7 @@ public class TileManager : MonoBehaviour
 
         foreach (var pos in floor)
         {
-            map.SetTile (pos, _tiles[0]);
+            map.SetTile (pos, _data.tiles[0]);
         }
             
     }
@@ -486,7 +501,7 @@ public class TileManager : MonoBehaviour
                             {
                                 choice = 1;
                             }
-                            map.SetTile (new Vector3Int (pos.x, pos.y, 0), _tiles[choice]);
+                            map.SetTile (new Vector3Int (pos.x, pos.y, 0), _data.tiles[choice]);
                             tileList.Add (new Vector3Int (pos.x, pos.y, 0));
                         }
                     }
@@ -513,7 +528,7 @@ public class TileManager : MonoBehaviour
         }
         foreach (Vector3Int entry in boundries)
         {
-            map.SetTile (entry, _tiles[1]);
+            map.SetTile (entry, _data.tiles[1]);
         }
         boundries.Clear ();
     }
@@ -556,7 +571,7 @@ public class TileManager : MonoBehaviour
     public void ShowTilesFromList(IEnumerable<Vector3Int> list) {
         foreach (var tile in list)
         {
-            map.SetTile (tile, _tiles[2]);
+            map.SetTile (tile, _data.tiles[2]);
         }
     }
 
@@ -564,7 +579,7 @@ public class TileManager : MonoBehaviour
         var ring = GenerateRing (center, radius);
         foreach (var tile in ring)
         {
-            map.SetTile (tile, _tiles[2]);
+            map.SetTile (tile, _data.tiles[2]);
         }
     }
     

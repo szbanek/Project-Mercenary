@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public static event Action<int> Hurt;
     public static event Action Move;
     public static event Action MapReady;
+    public static event Action<LevelData> NewMap;
 
     void Awake()
     {
@@ -27,9 +28,12 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        //UpdateGameState(GameState.PlayerTurnBeg);
+        UpdateGameState(GameState.MenuMain);
     }
-    
+
+    public void OnNewMap(LevelData lvl) {
+        NewMap ?.Invoke (lvl);
+    }
     public void OnMapReady() {
         MapReady?.Invoke ();
     }
@@ -67,49 +71,30 @@ public class GameManager : MonoBehaviour
 
     public void UpdateGameState(GameState newState)
     {
-    //     switch (newState)
-    //     {
-    //         case GameState.PlayerTurnBeg:
-    //             break;
-    //         case GameState.PlayerTurnMain:
-    //             break;
-    //         case GameState.PlayerTurnEnd:
-    //             break;
-    //         case GameState.EnemyTurnBeg:
-				// HandleEnemyTurnBeg();
-    //             return;
-    //         case GameState.EnemyTurnMain:
-    //             break;
-    //         case GameState.EnemyTurnEnd:
-    //             break;
-    //         case GameState.Lose:
-    //             break;
-    //         case GameState.Menu:
-    //             break;
-    //         case GameState.Victory:
-    //             break;
-    //         default:
-    //             throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
-    //     }
-    //     State = newState;
-    //     OnGameStateChange?.Invoke(newState);
+        switch (newState)
+        {
+            case GameState.MenuMain:
+                break;
+            case GameState.Game:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
+        }
+        State = newState;
+        OnGameStateChange?.Invoke(newState);
         
     }
-	private void HandleEnemyTurnBeg() {
-        Debug.Log ("In Enemy Turn");
-        Thread.Sleep (1000);
-        UpdateGameState (GameState.PlayerTurnBeg);
-    }
+	
 }
 
 public enum GameState {
-    PlayerTurnBeg,
-    PlayerTurnMain,
-    PlayerTurnEnd,
-    EnemyTurnBeg,
-    EnemyTurnMain,
-    EnemyTurnEnd,
-    Lose,
-    Menu,
-    Victory
+    MenuMain,
+    MenuIntro,
+    MenuInstruction,
+    MenuCredits,
+    MenuQuit,
+    Game,
+    Pause,
+    Victory,
+    Lose
 }

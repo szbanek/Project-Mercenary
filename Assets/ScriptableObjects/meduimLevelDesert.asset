@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b4cf7292e3847441af8b2ba70ae7a13, type: 3}
+  m_Name: meduimLevelDesert
+  m_EditorClassIdentifier: 
+  tileDatas:
+  - {fileID: 11400000, guid: 5a7c143dde5636b438ef194ca4e7d251, type: 2}
+  - {fileID: 11400000, guid: ff187e3083994d141b2fd6ddb7805312, type: 2}
+  - {fileID: 11400000, guid: 95b4bfa0ef772d74c9218bfc96923f3b, type: 2}
+  - {fileID: 11400000, guid: e39368deb1c7246488c304fe3099ffe6, type: 2}
+  tiles:
+  - {fileID: 11400000, guid: 93c4f8d335cd2b744b49db1995bdf58b, type: 2}
+  - {fileID: 11400000, guid: dd33e42467c7a7f4eacea961b144d125, type: 2}
+  - {fileID: 11400000, guid: faf728522b7930d4aa996b1a5bdda2e2, type: 2}
+  - {fileID: 11400000, guid: b4fe4d991d41cfe4e91b73317a33d178, type: 2}
+  distanceBetweenRooms: 1900000032000000
+  numOfRooms: 5
+  startRandomly: 1
+  walkLength: 0a00000014000000
+  iterations: 3200000096000000
+  corridorPercentage: 20
