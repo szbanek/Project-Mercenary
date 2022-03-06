@@ -108,6 +108,12 @@ public class EnemyMovement : MonoBehaviour
 
     private async Task<bool> MoveAnimation(Vector3 goal)
     {
+        if(tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) > 12 &&
+        tileManager.getDistance(tileManager.getPositionGrid(goal), tileManager.getPositionGrid(player.transform.position)) > 12)
+        {
+            transform.position = goal;
+            return false;
+        }
         transform.position = Vector3.MoveTowards(transform.position, goal, 4f * Time.deltaTime);
         await Task.Yield();
         if(transform.position == goal)

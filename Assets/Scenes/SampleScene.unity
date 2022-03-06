@@ -3076,8 +3076,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabs:
-  - {fileID: 5525540067731844468, guid: cf142eaee5ba2ba4bb603a216341dcbb, type: 3}
   - {fileID: 1362695910566160952, guid: 01a8389e27c7a414fb21a12a7e00d9aa, type: 3}
+  - {fileID: 5525540067731844468, guid: cf142eaee5ba2ba4bb603a216341dcbb, type: 3}
+  - {fileID: 5869391475747193413, guid: 25738ea53816aab4abafb7a030fdaf3f, type: 3}
 --- !u!1 &1613593324
 GameObject:
   m_ObjectHideFlags: 0
@@ -4024,3 +4025,4 @@ MonoBehaviour:
   map: {fileID: 1863539237}
   _grid: {fileID: 320719542}
   _data: {fileID: 11400000, guid: b7999cd606ea7fb47b7bb87fe8e913ab, type: 2}
+  enemiesPerBase: 5

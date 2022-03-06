@@ -10,6 +10,7 @@ using Random = UnityEngine.Random;
 public class TileManager : MonoBehaviour
 {
     public Tilemap map;
+    private EnemyManager enemyManager;
     private int width = 10;
     private int height = 25;
     private float x_offset = 1.5f;
@@ -25,6 +26,7 @@ public class TileManager : MonoBehaviour
     // [SerializeField] private int[] _iterations = {50, 150};
     // [SerializeField] [Range(0,100)]private int _corridorPercentage = 20;
     [SerializeField] private LevelData _data;
+    [SerializeField] private int enemiesPerBase = 5;
     
     private Dictionary<TileBase, TileData> dataFromTiles;
     private int[,,] _neighbours = {{{1, 0}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}}, {{1, 0}, {1, 1}, {0, 1}, {-1, 0}, {0, -1}, {1, -1}}};
@@ -45,6 +47,7 @@ public class TileManager : MonoBehaviour
     
     private void Awake()
     {
+        enemyManager = FindObjectOfType<EnemyManager>();
         GameManager.OnGameStateChange += GameManagerOnGameStateChanged;
         GameManager.NewMap += GameManagerOnNewMap;
         dataFromTiles = new Dictionary<TileBase, TileData>();
@@ -469,10 +472,19 @@ public class TileManager : MonoBehaviour
                 currentPos = floor.ElementAt (Random.Range (0, floor.Count));
             }
         }
-
+        int tmp = floor.Count/enemiesPerBase;
+        int counter1 = 0, counter2 = 1;
+        int enemies = Random.Range(0, tmp);
         foreach (var pos in floor)
         {
             map.SetTile (pos, _data.tiles[0]);
+            if(counter1 == enemies)
+            {
+                enemyManager.Create(Random.Range(0, 3), pos);
+                enemies = Random.Range(tmp*counter2, tmp*(counter2+1));
+                counter2++;
+            }
+            counter1++;
         }
             
     }

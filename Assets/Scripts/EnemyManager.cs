@@ -38,8 +38,8 @@ public class EnemyManager : MonoBehaviour
     }
 
     public void GameManagerOnMapReady() {
-        Create(0, new Vector3Int(1, 1, 0));
-        Create(1, new Vector3Int(-1, 1, 0));
+        //Create(0, new Vector3Int(1, 1, 0));
+        //Create(1, new Vector3Int(-1, 1, 0));
         GameManager.Instance.OnPTB ();
     }
 
@@ -72,7 +72,7 @@ public class EnemyManager : MonoBehaviour
         return null;
     }
 
-    public void Create(int type, Vector3Int vector) //type 0-Alien1, 1-Robodog
+    public void Create(int type, Vector3Int vector) //type 0-Robodog, 1-Alien1, 2-Alien2
     {
         enemies.Add(Instantiate(prefabs[type], tileManager.ToPix(vector), Quaternion.identity));
         enemiesPlacement.Add(vector);

@@ -86,6 +86,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void GameManagerOnPTE() {
         GameManager.Instance.OnEnemy ();
+        scoreManager.ChangeScore(-1);
     }
 
     private void UpdateGameProgress() {
@@ -147,7 +148,6 @@ public class PlayerMovement : MonoBehaviour
         }
         int dist = route.Count;
         energy -= dist;
-        scoreManager.ChangeScore(-dist); //distance traveled
         for(int i=0; i < route.Count; i++)
         {
             while(await MoveAnimation(tileManager.ToPix(route[i])));
@@ -169,7 +169,6 @@ public class PlayerMovement : MonoBehaviour
         if(energy >= attackEnergy)
         {
             energy -= attackEnergy;
-            scoreManager.ChangeScore(-attackEnergy); //attacks done
             await AttackAnimation(enemy);
             GameManager.Instance.OnMove(); //GameManager.Instance.OnAttack();
             isMoving = false;
