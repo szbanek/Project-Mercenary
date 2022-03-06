@@ -1,8 +1,8 @@
 ﻿<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="game" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="9416">
+  <configuration default="false" name="game" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="6916">
     <option name="allowRunningInParallel" value="false" />
     <option name="listenPortForConnections" value="false" />
-    <option name="pid" value="9416" />
+    <option name="pid" value="6916" />
     <option name="projectPathOnTarget" />
     <option name="selectedOptions">
       <list />
