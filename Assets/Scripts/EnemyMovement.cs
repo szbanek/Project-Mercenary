@@ -52,6 +52,11 @@ public class EnemyMovement : MonoBehaviour
 
     private async Task Move(int distance = 1) {
         tileManager.SetOcupied (tileManager.getPositionGrid (transform.position), false);
+        if (route.Count < distance)
+        {
+            distance = route.Count;
+        }
+        
         for(int i=0; i<distance; i++)
         {
              if(energy >= moveEnergy && tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) > 1)
@@ -69,12 +74,20 @@ public class EnemyMovement : MonoBehaviour
 
     private List <Vector3Int >  GetRandomPath(int distance) {
         List <Vector3Int > route = new List<Vector3Int> ();
+        int iterationCount = 0;
+        
         while (route.Count < distance)
         {
             var newPos = tileManager.GetGivenNeighbour (GetPosGrid (),Random.Range (0, 6));
             if (tileManager.isWalkable (newPos) && !tileManager.IsOcupied (newPos) && !route.Contains (newPos))
             {
                 route.Add (newPos);
+            }
+            iterationCount ++;
+            if (iterationCount > 6 * distance)
+            {
+                Debug.Log ("brak możliwości ruchu");
+                break;
             }
         }
 
@@ -165,12 +178,19 @@ public class EnemyMovement : MonoBehaviour
         var playerPos = tileManager.getPositionGrid (player.transform.position);
         var distToPlayer = tileManager.getDistance (selfPos, playerPos);
         int distToMove = distToPlayer;
-        bool canAttack = tileManager.CanSee (selfPos, playerPos);
-        //check if player is visible
-        if (distToPlayer <= visibilityRange && canAttack)
+        bool canAttack = false;
+        if (distToPlayer <= visibilityRange)
         {
-            route = tileManager.CalculateRoute (selfPos, playerPos);
-            route.Reverse();
+            canAttack = tileManager.CanSee (selfPos, playerPos);
+            if (canAttack)
+            {
+                route = tileManager.CalculateRoute (selfPos, playerPos);
+                route.Reverse ();
+            }
+            else
+            {
+                route = GetRandomPath (energy);
+            }
         }
         else
         {
