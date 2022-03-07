@@ -45,7 +45,9 @@ public class MenuManager : MonoBehaviour {
     }
 
     public void QuitClicked() {
-        GameManager.Instance.UpdateGameState (GameState.MenuQuit);
+        //GameManager.Instance.UpdateGameState (GameState.MenuQuit);
+        UnityEditor.EditorApplication.isPlaying = false;
+        Application.Quit();
     }
 
     // Update is called once per frame
