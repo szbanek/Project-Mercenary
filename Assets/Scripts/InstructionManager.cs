@@ -43,7 +43,10 @@ public class InstructionManager : MonoBehaviour {
         _smallTitles = new List<string>();
         _smallTitles.Add ("Move");
         _smallTitles.Add ("Attack");
+        _smallTitles.Add ("End of Turn");
+        _smallTitles.Add ("Enemies");
         _smallTitles.Add ("Goal");
+        _smallTitles.Add ("Bonuses");
         _numOfPages = _smallTitles.Count-1;
     }
 
@@ -72,6 +75,7 @@ public class InstructionManager : MonoBehaviour {
     }
 
     private void ManageInstruction() {
+        _actPage = 0;
         _title.text = "Instruction";
         _instructionPanel.SetActive (true);
         _creditsPanel.SetActive (false);
