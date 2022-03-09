@@ -1,0 +1,3 @@
+﻿To move your character use mouse. Click on a highlighted tile. Your character will go there. Each tile you pass costs your character one energy point.
+To attack an enemy click on an occupied tile. Your character will come closer and attack. Each attack costs one energy point
+Your goal is to visit all communication hubs and activate them. To activate a hub your character need to finish his round on hub tile. 
