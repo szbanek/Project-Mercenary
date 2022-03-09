@@ -81,6 +81,8 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.MenuCredits:
                 break;
+            case GameState.MenuIntro:
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
         }

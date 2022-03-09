@@ -32,8 +32,7 @@ public class MenuManager : MonoBehaviour {
     }
 
     public void StartClicked() {
-        GameManager.Instance.UpdateGameState (GameState.Game);
-        GameManager.Instance.OnNewMap (_lvl);
+        GameManager.Instance.UpdateGameState (GameState.MenuIntro);
     }
 
     public void InstructionClicked() {
