@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Threading.Tasks;
+using UnityEngine.EventSystems;
 
 public class IntrodutionManager : MonoBehaviour {
     [SerializeField] private TMP_Text _introductionText;
@@ -11,6 +12,9 @@ public class IntrodutionManager : MonoBehaviour {
     [SerializeField] private TMP_Text _skipLabel;
     [SerializeField] private Canvas _self;
     [SerializeField] private LevelData _lvl;
+    [SerializeField] private List<Image> _boxes;
+    [SerializeField] private GameObject _choosePanel;
+    [SerializeField] private Button _start;
     private bool skiped = false;
     void Start() {}
 
@@ -39,14 +43,24 @@ public class IntrodutionManager : MonoBehaviour {
     public void SkipClicked() {
         if (skiped)
         {
-            GameManager.Instance.UpdateGameState (GameState.Game);
-            GameManager.Instance.OnNewMap (_lvl);
+            _choosePanel.SetActive (true);
         }
         skiped = true;
     }
 
+    public void StartClicked() {
+        GameManager.Instance.UpdateGameState (GameState.Game);
+        GameManager.Instance.OnNewMap (_lvl);
+    }
+
+    public void BoxClicked() {
+        var name = EventSystem.current.currentSelectedGameObject.name;
+        int id = int.Parse(name.Substring (3))-1;
+    }
+
     private void GameManagerOnGameStateChanged(GameState state) {
         _self.enabled = state == GameState.MenuIntro;
+        _choosePanel.SetActive(false);
         if (state == GameState.MenuIntro)
         {
             StartCoroutine(TypeWriter ());
