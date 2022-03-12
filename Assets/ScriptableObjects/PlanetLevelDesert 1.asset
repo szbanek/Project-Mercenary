@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1b4cf7292e3847441af8b2ba70ae7a13, type: 3}
-  m_Name: meduimLevelDesert
+  m_Name: PlanetLevelDesert 1
   m_EditorClassIdentifier: 
   tileDatas:
   - {fileID: 11400000, guid: 5a7c143dde5636b438ef194ca4e7d251, type: 2}
@@ -22,10 +22,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dd33e42467c7a7f4eacea961b144d125, type: 2}
   - {fileID: 11400000, guid: faf728522b7930d4aa996b1a5bdda2e2, type: 2}
   - {fileID: 11400000, guid: b4fe4d991d41cfe4e91b73317a33d178, type: 2}
-  distanceBetweenRooms: 1900000028000000
-  numOfRooms: 5
+  distanceBetweenRooms: 1e0000002d000000
+  numOfRooms: 15
   startRandomly: 1
   walkLength: 0a00000014000000
-  iterations: 3200000096000000
+  iterations: 32000000c8000000
   corridorPercentage: 20
-  enemiesPerBase: 5
+  enemiesPerBase: 6

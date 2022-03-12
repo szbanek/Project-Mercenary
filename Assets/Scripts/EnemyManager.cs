@@ -24,12 +24,14 @@ public class EnemyManager : MonoBehaviour
     {
         GameManager.Enemy += GameManagerOnEnemy;
         GameManager.MapReady += GameManagerOnMapReady;
+        GameManager.OnGameStateChange += GameManagerOnGameStateChanged;
     }
 
     void OnDestroy()
     {
         GameManager.Enemy -= GameManagerOnEnemy;
         GameManager.MapReady -= GameManagerOnMapReady;
+        GameManager.OnGameStateChange -= GameManagerOnGameStateChanged;
     }
     // Update is called once per frame
     void Update()
@@ -37,9 +39,17 @@ public class EnemyManager : MonoBehaviour
         
     }
 
+    void GameManagerOnGameStateChanged(GameState state) {
+        if (state == GameState.End)
+        {
+            foreach (var en in enemiesPlacement)
+            {
+                Destroy (en);
+            }
+        }
+    }
+
     public void GameManagerOnMapReady() {
-        //Create(0, new Vector3Int(1, 1, 0));
-        //Create(1, new Vector3Int(-1, 1, 0));
         GameManager.Instance.OnPTB ();
     }
 

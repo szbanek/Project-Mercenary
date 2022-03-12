@@ -83,12 +83,13 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.MenuIntro:
                 break;
+            case GameState.End:
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
         }
         State = newState;
         OnGameStateChange?.Invoke(newState);
-        
     }
 	
 }
@@ -101,6 +102,5 @@ public enum GameState {
     MenuQuit,
     Game,
     Pause,
-    Victory,
-    Lose
+    End
 }

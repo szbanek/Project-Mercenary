@@ -47,6 +47,7 @@ public class InstructionManager : MonoBehaviour {
         _smallTitles.Add ("Enemies");
         _smallTitles.Add ("Goal");
         _smallTitles.Add ("Bonuses");
+        _smallTitles.Add ("Score");
         _numOfPages = _smallTitles.Count-1;
     }
 

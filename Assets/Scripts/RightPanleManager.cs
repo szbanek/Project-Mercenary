@@ -8,7 +8,6 @@ using TMPro;
 public class RightPanleManager : MonoBehaviour
 {
     [SerializeField] private Button _endTurnButton;
-    [SerializeField] private Button _loseButton;
     [SerializeField] private PlayerMovement _player;
     [SerializeField] private Canvas _canvas;
     [SerializeField] private Sprite _energyOrb;
@@ -34,7 +33,7 @@ public class RightPanleManager : MonoBehaviour
         _playerTurn = false;
         _energyList = new List<GameObject>();
         _lifeList = new List<GameObject> ();
-        _loseButton.gameObject.SetActive (false);
+        
         RectTransform tr = _canvas.GetComponent<RectTransform>();
         _UIwidth = tr.rect.width;
         _UIheight = tr.rect.height;
@@ -59,7 +58,6 @@ public class RightPanleManager : MonoBehaviour
         GameManager.UIOn += GameManagerOnUIOn;
         GameManager.UIOff += GameManagerOnUIOff;
         GameManager.Hurt += GameManagerOnHurt;
-        GameManager.Lose += GameManagerOnLose;
     }
 
     void OnDestroy()
@@ -70,7 +68,6 @@ public class RightPanleManager : MonoBehaviour
         GameManager.UIOn -= GameManagerOnUIOn;
         GameManager.UIOff -= GameManagerOnUIOff;
         GameManager.Hurt -= GameManagerOnHurt;
-        GameManager.Lose -= GameManagerOnLose;
     }
 
     void Update() {
@@ -78,9 +75,7 @@ public class RightPanleManager : MonoBehaviour
         SetEnergyPoints ();
     }
 
-    private void GameManagerOnLose() {
-        _loseButton.gameObject.SetActive (true);
-    }
+    
     private void GameManagerOnHurt(int hp) {
         while (hp > 0)
         {
@@ -168,7 +163,8 @@ public class RightPanleManager : MonoBehaviour
     
 
     public void GameManagerOnGameStateChanged(GameState state) {
-        _canvas.enabled = state == GameState.Game;
+        _canvas.enabled = state == GameState.Game || state == GameState.End;
+
     }
     
     public void EndTurn()

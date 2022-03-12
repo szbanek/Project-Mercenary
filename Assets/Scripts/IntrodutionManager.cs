@@ -11,15 +11,24 @@ public class IntrodutionManager : MonoBehaviour {
     [SerializeField] private Button _skip;
     [SerializeField] private TMP_Text _skipLabel;
     [SerializeField] private Canvas _self;
-    [SerializeField] private LevelData _lvl;
+    [SerializeField] private List<LevelData> _lvl;
     [SerializeField] private List<Image> _boxes;
     [SerializeField] private GameObject _choosePanel;
     [SerializeField] private Button _start;
-    private bool skiped = false;
+    [SerializeField] private List<Sprite> _boxesGraphic;
+    private bool _firstPlay = true;
+    private int _activeButton = 1;
+    private bool _skipped = false;
     void Start() {}
 
     void Awake() {
         GameManager.OnGameStateChange += GameManagerOnGameStateChanged;
+        foreach (var box in _boxes)
+        {
+            box.overrideSprite = _boxesGraphic[0];
+        }
+
+        _boxes[_activeButton].overrideSprite = _boxesGraphic[1];
     }
 
     void OnDestroy() {
@@ -30,7 +39,7 @@ public class IntrodutionManager : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if (skiped)
+        if (_skipped)
         {
             _skipLabel.text = "Close";
         }
@@ -41,30 +50,42 @@ public class IntrodutionManager : MonoBehaviour {
     }
 
     public void SkipClicked() {
-        if (skiped)
+        if (_skipped)
         {
             _choosePanel.SetActive (true);
         }
-        skiped = true;
+        _skipped = true;
     }
 
     public void StartClicked() {
         GameManager.Instance.UpdateGameState (GameState.Game);
-        GameManager.Instance.OnNewMap (_lvl);
+        GameManager.Instance.OnNewMap (_lvl[_activeButton]);
     }
 
     public void BoxClicked() {
         var name = EventSystem.current.currentSelectedGameObject.name;
         int id = int.Parse(name.Substring (3))-1;
+        _boxes[_activeButton].overrideSprite = _boxesGraphic[0];
+        _boxes[id].overrideSprite = _boxesGraphic[1];
+        _activeButton = id;
+        
     }
 
     private void GameManagerOnGameStateChanged(GameState state) {
         _self.enabled = state == GameState.MenuIntro;
-        _choosePanel.SetActive(false);
-        if (state == GameState.MenuIntro)
+        if (_firstPlay)
         {
-            StartCoroutine(TypeWriter ());
+            _choosePanel.SetActive(false);
+            if (state == GameState.MenuIntro)
+            {
+                StartCoroutine(TypeWriter ());
+            }
         }
+        else
+        {
+            _choosePanel.SetActive(true);
+        }
+        
     }
 
     private IEnumerator TypeWriter() {
@@ -73,7 +94,7 @@ public class IntrodutionManager : MonoBehaviour {
         int charIndex = 0;
         while (charIndex < txt.Length)
         {
-            if (skiped)
+            if (_skipped)
             {
                 break;
             }
@@ -86,5 +107,7 @@ public class IntrodutionManager : MonoBehaviour {
         }
 
         _introductionText.text = txt;
+        _skipped = true;
+        _firstPlay = false;
     }
 }

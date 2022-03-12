@@ -11,28 +11,15 @@ public class TileManager : MonoBehaviour
 {
     public Tilemap map;
     private EnemyManager enemyManager;
-    private int width = 10;
-    private int height = 25;
     private float x_offset = 1.5f;
-    private float y_offset = 0.435f;
 
     [SerializeField] private Grid _grid;
-    // [SerializeField] private List<TileData> tileDatas;
-    // [SerializeField] private List<TileBase> _tiles;
-    // [SerializeField] private int[] _dist = {25,50};
-    // [SerializeField] [Range (2, 15)] private int _numOfRooms = 5;
-    // [SerializeField] private bool _startRandomly = true;
-    // [SerializeField] private int[] _walkLength = {10, 20};
-    // [SerializeField] private int[] _iterations = {50, 150};
-    // [SerializeField] [Range(0,100)]private int _corridorPercentage = 20;
     [SerializeField] private LevelData _data;
-    [SerializeField] private int enemiesPerBase = 5;
-    
     private Dictionary<TileBase, TileData> dataFromTiles;
     private int[,,] _neighbours = {{{1, 0}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}}, {{1, 0}, {1, 1}, {0, 1}, {-1, 0}, {0, -1}, {1, -1}}};
     private List<Vector3Int> _cubeDirections = new List<Vector3Int> () {
-    new Vector3Int (0,-1,1), new Vector3Int (1, -1, 0), new Vector3Int (1, 0, -1),
-    new Vector3Int(0,1,-1),new Vector3Int (-1,1,0), new Vector3Int (-1,0,1)};
+        new Vector3Int (0,-1,1), new Vector3Int (1, -1, 0), new Vector3Int (1, 0, -1),
+        new Vector3Int(0,1,-1),new Vector3Int (-1,1,0), new Vector3Int (-1,0,1)};
 
     private List<Vector3Int> _ocupied;
     void Start()
@@ -62,6 +49,7 @@ public class TileManager : MonoBehaviour
     }
 
     void GameManagerOnNewMap(LevelData lvl) {
+        map.ClearAllTiles ();
         _data = lvl;
         GenerateMap ();
         GameManager.Instance.OnMapReady ();
@@ -472,7 +460,7 @@ public class TileManager : MonoBehaviour
                 currentPos = floor.ElementAt (Random.Range (0, floor.Count));
             }
         }
-        int tmp = floor.Count/enemiesPerBase;
+        int tmp = floor.Count/_data.enemiesPerBase;
         int counter1 = 0, counter2 = 1;
         int enemies = Random.Range(0, tmp);
         foreach (var pos in floor)

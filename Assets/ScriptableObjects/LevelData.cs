@@ -13,4 +13,5 @@ public class LevelData : ScriptableObject
     public int[] walkLength = {10, 20};
     public int[] iterations = {50, 150};
     [Range(0,100)]public int corridorPercentage = 20;
+    public int enemiesPerBase = 4;
 }

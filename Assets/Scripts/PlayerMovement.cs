@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
     private RangeManager rangeManager;
     private EnemyManager enemyManager;
     private ScoreManager scoreManager;
+    private EndManager endManager;
     private Vector3Int startPosition;
     private Vector3 coorPosition;
     private SpriteRenderer _rend;
@@ -40,6 +41,7 @@ public class PlayerMovement : MonoBehaviour
         rangeManager = FindObjectOfType<RangeManager>();
         enemyManager = FindObjectOfType<EnemyManager>();
         scoreManager = FindObjectOfType<ScoreManager>();
+        endManager = FindObjectOfType<EndManager>();
         
         GameManager.OnGameStateChange += GameManagerOnGameStateChanged;
         GameManager.PlayerTurnBegin += GameManagerOnPTB;
@@ -91,6 +93,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void UpdateGameProgress() {
         _gameProgressBar.SetValue(_visitedHubs.Count);
+        if (_visitedHubs.Count == _hubsCount)
+        {
+            endManager.SetWin (true);
+            GameManager.Instance.UpdateGameState (GameState.End);
+        }
     }
 
 
@@ -210,7 +217,8 @@ public class PlayerMovement : MonoBehaviour
         {
             scoreManager.ChangeScore(_health); //overkill damage
             _rend.enabled = false;
-            GameManager.Instance.OnLose ();
+            endManager.SetWin (false);
+            GameManager.Instance.UpdateGameState (GameState.End);
         }
         else
         {

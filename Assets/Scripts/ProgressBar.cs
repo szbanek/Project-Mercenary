@@ -18,4 +18,5 @@ public class ProgressBar : MonoBehaviour {
     public float GetValue() {
         return _slider.value;
     }
+    
 }
