@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 using UnityEngine;
 
 
@@ -12,6 +13,7 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private List<GameObject> prefabs;
     private List<GameObject> enemies = new List<GameObject> ();
     private List<Vector3Int> enemiesPlacement = new List<Vector3Int>();
+    private List<Tuple<Vector3Int, int>> enemiesStartingPoints = new List<Tuple<Vector3Int, int>> ();
 
     // Start is called before the first frame update
     void Start()
@@ -53,6 +55,10 @@ public class EnemyManager : MonoBehaviour
         GameManager.Instance.OnPTB ();
     }
 
+    public void SaveEnemyParameters(int type, Vector3Int pos) {
+        enemiesStartingPoints.Add (new Tuple<Vector3Int, int> (pos, type));
+    }
+
     public async void GameManagerOnEnemy()
     {
         await EnemiesMove();
@@ -80,6 +86,15 @@ public class EnemyManager : MonoBehaviour
             }
         }
         return null;
+    }
+
+    public void ResetEnemies() {
+        enemiesPlacement.Clear();
+        enemies.Clear ();
+        foreach (var info in enemiesStartingPoints)
+        {
+            Create (info.Item2, info.Item1);
+        }
     }
 
     public void Create(int type, Vector3Int vector) //type 0-Robodog, 1-Alien1, 2-Alien2

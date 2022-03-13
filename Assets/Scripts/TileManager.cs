@@ -474,7 +474,9 @@ public class TileManager : MonoBehaviour
             map.SetTile (pos, _data.tiles[0]);
             if(counter1 == enemies)
             {
-                enemyManager.Create(Random.Range(0, 3), pos);
+                int type = Random.Range (0, 3);
+                enemyManager.Create(type, pos);
+                enemyManager.SaveEnemyParameters (type, pos);
                 enemies = Random.Range(tmp*counter2, tmp*(counter2+1));
                 counter2++;
             }

@@ -10,7 +10,6 @@ public class SettingsManager : MonoBehaviour {
     [SerializeField] private GameObject _pausePanel;
     private AudioSource _music;
     private PlayerMovement _playerMovement;
-    private bool _pauseState = false;
     private int id = 0;
     void Start() {
        _music = FindObjectOfType<AudioSource> ();

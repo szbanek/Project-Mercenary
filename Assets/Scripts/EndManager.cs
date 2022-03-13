@@ -12,10 +12,14 @@ public class EndManager : MonoBehaviour
     [SerializeField] private Button _back;
     [SerializeField] private Button _tryAgain;
     private ScoreManager scoreManager;
+    private PlayerMovement _player;
+    private EnemyManager _enemy;
     private bool _win;
 
     void Start() {
         scoreManager = FindObjectOfType<ScoreManager>();
+        _player = FindObjectOfType<PlayerMovement>();
+        _enemy = FindObjectOfType<EnemyManager>();
     }
     
     void Awake() {
@@ -57,7 +61,9 @@ public class EndManager : MonoBehaviour
     }
 
     public void TryAgainClicked() {
-        
+        _player.ResetGame();
+        _enemy.ResetEnemies ();
+        GameManager.Instance.UpdateGameState (GameState.Game);
     }
 
     public void SetWin(bool state) {

@@ -115,7 +115,7 @@ public class PlayerMovement : MonoBehaviour
         _reaction = state == GameState.Game;
     }
 
-    private void ResetGame() {
+    public void ResetGame() {
         scoreManager.SetStartingValue (100);
         _gameProgressBar.SetValue (0);
         _health = 120;
