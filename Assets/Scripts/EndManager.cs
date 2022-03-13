@@ -52,6 +52,7 @@ public class EndManager : MonoBehaviour
     }
 
     public void BackClicked() {
+        
         GameManager.Instance.UpdateGameState (GameState.MenuMain);
     }
 

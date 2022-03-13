@@ -76,6 +76,12 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    public void UpdateHub(Vector3Int pos) {
+        var tile = _data.tiles[4];
+        map.SetTransformMatrix (pos, Matrix4x4.TRS (Vector3.zero, Quaternion.Euler(0f, 0f, 0f), Vector3.one));
+        map.SetTile (pos, tile);
+    }
+
     public int GetNumOfRooms() {
         return _data.numOfRooms;
     }

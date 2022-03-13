@@ -17,6 +17,10 @@ public class ScoreManager : MonoBehaviour
         
     }
 
+    public void SetStartingValue(int v) {
+        score = v;
+    }
+
     public void ChangeScore(int addition)
     {
         score += addition;

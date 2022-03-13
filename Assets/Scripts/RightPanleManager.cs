@@ -48,7 +48,7 @@ public class RightPanleManager : MonoBehaviour
         _energyBarY = -0.5f*_UIheight + buttonCenter + buttonHeight/2 + _offset + _imageSize/2;
         _lifeBarX = _UIwidth / 2 - _panelWidth + _offset+ _imageSize/2;
         _energyBarX = _lifeBarX + _imageSize + _offset;
-        SetLife ();
+        
     }
     void Awake()
     {
@@ -115,6 +115,19 @@ public class RightPanleManager : MonoBehaviour
         }
     }
 
+    private void ClearOrbs() {
+        foreach (var obj in _energyList)
+        {
+            Destroy(obj);
+        }
+        _energyList.Clear ();
+        foreach (var obj in _lifeList)
+        {
+            Destroy(obj);
+        }
+        _lifeList.Clear ();
+    }
+
     private void SetEnergyPoints() {
         int energy = _player.GetEnergy ();
         if (_playerTurn)
@@ -164,7 +177,15 @@ public class RightPanleManager : MonoBehaviour
 
     public void GameManagerOnGameStateChanged(GameState state) {
         _canvas.enabled = state == GameState.Game || state == GameState.End;
+        if (state == GameState.Game)
+        {
+            SetLife ();
+        }
 
+        if (state == GameState.End)
+        {
+            ClearOrbs();
+        }
     }
     
     public void EndTurn()

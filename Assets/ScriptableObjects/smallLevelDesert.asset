@@ -22,6 +22,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dd33e42467c7a7f4eacea961b144d125, type: 2}
   - {fileID: 11400000, guid: faf728522b7930d4aa996b1a5bdda2e2, type: 2}
   - {fileID: 11400000, guid: b4fe4d991d41cfe4e91b73317a33d178, type: 2}
+  - {fileID: 11400000, guid: df168332a1370c043a7cd4367d83f111, type: 2}
   distanceBetweenRooms: 0a00000019000000
   numOfRooms: 3
   startRandomly: 1

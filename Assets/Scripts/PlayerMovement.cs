@@ -27,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
     private bool canMove = false;
     private bool isMoving = false;
     private bool done = false;
+    private bool _reaction = false;
 
 
     void Start()
@@ -35,6 +36,8 @@ public class PlayerMovement : MonoBehaviour
         _rend = this.gameObject.GetComponent<SpriteRenderer> ();
         _visitedHubs = new List<Vector3Int> ();
     }
+
+    
     void Awake()
     {
         tileManager = FindObjectOfType<TileManager>();
@@ -76,9 +79,9 @@ public class PlayerMovement : MonoBehaviour
             if (!_visitedHubs.Contains (startPosition))
             {
                 _visitedHubs.Add (startPosition);
+                UpdateGameProgress (startPosition);
             }
         }
-        UpdateGameProgress ();
     }
 
     private void GameManagerOnPTM() {
@@ -91,8 +94,9 @@ public class PlayerMovement : MonoBehaviour
         scoreManager.ChangeScore(-1);
     }
 
-    private void UpdateGameProgress() {
+    private void UpdateGameProgress(Vector3Int pos) {
         _gameProgressBar.SetValue(_visitedHubs.Count);
+        tileManager.UpdateHub (pos);
         if (_visitedHubs.Count == _hubsCount)
         {
             endManager.SetWin (true);
@@ -102,45 +106,73 @@ public class PlayerMovement : MonoBehaviour
 
 
     private void GameManagerOnGameStateChanged(GameState state) {
+        if (state == GameState.Game)
+        {
+            ResetGame();
+        }
+
+        _rend.enabled = state == GameState.Game;
+        _reaction = state == GameState.Game;
+    }
+
+    private void ResetGame() {
+        scoreManager.SetStartingValue (100);
+        _gameProgressBar.SetValue (0);
+        _health = 120;
+        transform.position = Vector3.zero;
+        canMove = false;
+        isMoving = false;
+        done = false;
+        _reaction = false;
+        _visitedHubs.Clear ();
+    }
+    public void Pause() {
+        _reaction = _reaction ^ true;
     }
     async void Update()
     {
-        if (canMove && !isMoving)
+        if (_reaction)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (canMove && !isMoving)
             {
-                done = false;
-                Vector2 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector3Int gridPos = tileManager.map.WorldToCell(targetPos);
-                EnemyMovement enemy = enemyManager.GetEnemyByGrid(gridPos);
-                if(gridPos == tileManager.getPositionGrid(transform.position))
+                if (Input.GetMouseButtonDown (0))
                 {
-                    GameManager.Instance.OnPTE();
-                }
-                if(enemy != null && !done)
-                {
-                    if(tileManager.GetNeigbours(transform.position).Contains(gridPos))
+                    done = false;
+                    Vector2 targetPos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+                    Vector3Int gridPos = tileManager.map.WorldToCell (targetPos);
+                    EnemyMovement enemy = enemyManager.GetEnemyByGrid (gridPos);
+                    if (gridPos == tileManager.getPositionGrid (transform.position))
                     {
-                        await Attack(enemy);
+                        GameManager.Instance.OnPTE ();
                     }
-                    else if(rangeManager.IsReachable(targetPos) && !done)
+
+                    if (enemy != null && !done)
                     {
-                        tileManager.SetOcupied (gridPos, false);
-                        await Move(gridPos, true);
-                        tileManager.SetOcupied (gridPos, true);
-                        await Attack(enemy);
+                        if (tileManager.GetNeigbours (transform.position).Contains (gridPos))
+                        {
+                            await Attack (enemy);
+                        }
+                        else if (rangeManager.IsReachable (targetPos) && !done)
+                        {
+                            tileManager.SetOcupied (gridPos, false);
+                            await Move (gridPos, true);
+                            tileManager.SetOcupied (gridPos, true);
+                            await Attack (enemy);
+                        }
                     }
-                }
-                if (tileManager.isWalkable(targetPos) && rangeManager.IsReachable(targetPos) && !done)
-                {
-                    await Move(gridPos, false);
+
+                    if (tileManager.isWalkable (targetPos) && rangeManager.IsReachable (targetPos) && !done)
+                    {
+                        await Move (gridPos, false);
+                    }
                 }
             }
-        }
-        if (Input.GetKeyDown (KeyCode.Space))
-        {
-            int a = Random.Range (15, 35);
-            TakeDamage(a);
+
+            if (Input.GetKeyDown (KeyCode.Space))
+            {
+                int a = Random.Range (15, 35);
+                TakeDamage (a);
+            }
         }
     }
 
@@ -216,7 +248,6 @@ public class PlayerMovement : MonoBehaviour
         if (_health <= 0)
         {
             scoreManager.ChangeScore(_health); //overkill damage
-            _rend.enabled = false;
             endManager.SetWin (false);
             GameManager.Instance.UpdateGameState (GameState.End);
         }
