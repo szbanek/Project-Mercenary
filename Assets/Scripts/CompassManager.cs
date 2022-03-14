@@ -31,21 +31,20 @@ public class CompassManager : MonoBehaviour {
     private float CalculateDirection() {
         var playerPos = _player.GetPosGrid ();
         var distMin = int.MaxValue;
-        var choice = new Vector3Int ();
+        var choice = new Vector3 ();
         foreach (var hub in _hubsToVisit)
         {
             var curDist = _map.getDistance (playerPos, hub);
             if (curDist < distMin)
             {
-                choice = hub;
+                choice = _map.ToPix(hub);
                 distMin = curDist;
             }
         }
         Vector3 targ = _player.GetPosCoor ();
-        Vector3 t = _map.ToPix (choice);
         targ.z = 0f;
-        targ.x = t.x - targ.x;
-        targ.y = t.y - targ.y;
+        targ.x = targ.x - choice.x;
+        targ.y = choice.y - targ.y;
         float angle = Mathf.Atan2(targ.y, targ.x) * Mathf.Rad2Deg;
 
         return angle;
