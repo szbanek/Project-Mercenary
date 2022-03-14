@@ -12,12 +12,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private ProgressBar _gameProgressBar;
     private int energy;
     private int _health = 120;
-    [SerializeField] private int attackDamage = 30;
+    [SerializeField] private int attackDamage = 20;
     private TileManager tileManager;
     private RangeManager rangeManager;
     private EnemyManager enemyManager;
     private ScoreManager scoreManager;
     private EndManager endManager;
+    private CameraManager cameraManager;
     private Vector3Int startPosition;
     private Vector3 coorPosition;
     private SpriteRenderer _rend;
@@ -45,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
         enemyManager = FindObjectOfType<EnemyManager>();
         scoreManager = FindObjectOfType<ScoreManager>();
         endManager = FindObjectOfType<EndManager>();
+        cameraManager = FindObjectOfType<CameraManager>();
         
         GameManager.OnGameStateChange += GameManagerOnGameStateChanged;
         GameManager.PlayerTurnBegin += GameManagerOnPTB;
@@ -194,6 +196,7 @@ public class PlayerMovement : MonoBehaviour
             coorPosition = transform.position;
         }
         GameManager.Instance.OnMove();
+        cameraManager.UpdateCamera();
         isMoving = false;
         if (energy <= 0)
         {

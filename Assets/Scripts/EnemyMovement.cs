@@ -17,6 +17,7 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private int maxHealth = 20;
     [SerializeField] private int currentHealth;
     [SerializeField] private int visibilityRange = 3; // don't set over 6
+    [SerializeField] private int score = 10;
     [SerializeField] private GameObject attackBallPrefab;
     private GameObject player;
     private PlayerMovement playerMovement;
@@ -74,11 +75,12 @@ public class EnemyMovement : MonoBehaviour
 
     private List <Vector3Int >  GetRandomPath(int distance) {
         List <Vector3Int > route = new List<Vector3Int> ();
+        route.Add(GetPosGrid());
         int iterationCount = 0;
         
         while (route.Count < distance)
         {
-            var newPos = tileManager.GetGivenNeighbour (GetPosGrid (),Random.Range (0, 6));
+            var newPos = tileManager.GetGivenNeighbour (route[route.Count-1],Random.Range (0, 6));
             if (tileManager.isWalkable (newPos) && !tileManager.IsOcupied (newPos) && !route.Contains (newPos))
             {
                 route.Add (newPos);
@@ -90,7 +92,7 @@ public class EnemyMovement : MonoBehaviour
                 break;
             }
         }
-
+        route.RemoveAt(0);
         return route;
     }
     
@@ -99,22 +101,24 @@ public class EnemyMovement : MonoBehaviour
         if(energy >= attackEnergy){
             if(attackRange == 1)
             {
-                AttackAnimationMelee();
+                await AttackAnimationMelee();
             }
             else
             {
-                AttackAnimationRange();
+                await AttackAnimationRange();
             }
             energy -= attackEnergy;
             if (energy <= 0)
             {
                 return;
             }
+            else
+            {
+                await Attack();
+            }
         }
         else
         {
-            route = tileManager.CalculateRoute (tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position));
-            route.Reverse();
             await Move((int)(energy/moveEnergy));
         }
     }
@@ -139,7 +143,7 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    private async void AttackAnimationMelee()
+    private async Task AttackAnimationMelee()
     { 
         var pos = transform.position;
         var goal = tileManager.CalculateMiddle(tileManager.ToPix(playerMovement.GetPosGrid()), pos);
@@ -148,7 +152,7 @@ public class EnemyMovement : MonoBehaviour
         while(await MoveAnimation(pos));
     }
 
-    private async void AttackAnimationRange()
+    private async Task AttackAnimationRange()
     {
         Vector3 targ = player.transform.position;
         targ.z = 0f;
@@ -205,7 +209,7 @@ public class EnemyMovement : MonoBehaviour
         {
             await Move(distToMove);
         }
-        else
+        if(canAttack)
         {
             await Attack();
         }
@@ -218,6 +222,6 @@ public class EnemyMovement : MonoBehaviour
 
     public int CalculateScore()
     {
-        return (int)((attackRange*attackDamage*maxEnergy*(maxHealth-currentHealth*2))/(attackEnergy*moveEnergy*25));
+        return score;
     }
 }

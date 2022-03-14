@@ -15,14 +15,16 @@ public class CameraManager : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
+       
+    }
+
+    public void UpdateCamera()
+    {
         var camPos = Camera.main.transform.position;
-        if (Vector2.Distance((Vector2)_player.transform.position, (Vector2)camPos) >=3)
-        {
-            var dir = new Vector2 ();
-            var playerPos = _player.transform.position;
-            dir = (Vector2)(camPos - playerPos);
-            camPos = new Vector3 (camPos.x - dir.x, camPos.y - dir.y, camPos.z);
-            Camera.main.transform.position = camPos;
-        }
+        var dir = new Vector2 ();
+        var playerPos = _player.transform.position;
+        dir = (Vector2)(camPos - playerPos);
+        camPos = new Vector3 (camPos.x - dir.x, camPos.y - dir.y, camPos.z);
+        Camera.main.transform.position = camPos;
     }
 }

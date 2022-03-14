@@ -97,13 +97,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3805b33aa5978dd49851ed103ed744f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 2
+  attackRange: 3
   attackDamage: 15
   attackEnergy: 1
   moveEnergy: 1
-  maxEnergy: 1
+  maxEnergy: 2
   energy: 0
   maxHealth: 20
   currentHealth: 20
-  visibilityRange: 5
+  visibilityRange: 6
+  score: 15
   attackBallPrefab: {fileID: 7101782336004697689, guid: 3374110ad7f66074ebfd6fe71dec43d5, type: 3}

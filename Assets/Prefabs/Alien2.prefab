@@ -98,12 +98,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackRange: 1
-  attackDamage: 5
+  attackDamage: 10
   attackEnergy: 2
   moveEnergy: 1
-  maxEnergy: 3
+  maxEnergy: 5
   energy: 0
   maxHealth: 20
   currentHealth: 20
-  visibilityRange: 3
+  visibilityRange: 6
   attackBallPrefab: {fileID: 7101782336004697689, guid: 3374110ad7f66074ebfd6fe71dec43d5, type: 3}
