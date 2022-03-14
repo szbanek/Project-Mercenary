@@ -42,9 +42,10 @@ public class CompassManager : MonoBehaviour {
             }
         }
         Vector3 targ = _player.GetPosCoor ();
+        Vector3 t = _map.ToPix (choice);
         targ.z = 0f;
-        targ.x = choice.x - targ.x;
-        targ.y = choice.y - targ.y;
+        targ.x = t.x - targ.x;
+        targ.y = t.y - targ.y;
         float angle = Mathf.Atan2(targ.y, targ.x) * Mathf.Rad2Deg;
 
         return angle;
