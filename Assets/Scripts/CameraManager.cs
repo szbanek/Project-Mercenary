@@ -7,15 +7,17 @@ public class CameraManager : MonoBehaviour
     public GameObject _player;
 
     public TileManager _map;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+
+    private void Awake() {
+        GameManager.MapReady += GameManagerOnMapReady;
     }
 
-    // Update is called once per frame
-    void Update() {
-       
+    private void OnDestroy() {
+        GameManager.MapReady -= GameManagerOnMapReady;
+    }
+
+    void GameManagerOnMapReady() {
+        Camera.main.transform.position = new Vector3 (0, 0, Camera.main.transform.position.z);
     }
 
     public void UpdateCamera()

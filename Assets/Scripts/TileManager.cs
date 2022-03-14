@@ -11,6 +11,7 @@ public class TileManager : MonoBehaviour
 {
     public Tilemap map;
     private EnemyManager enemyManager;
+    private CompassManager _compass;
     private float x_offset = 1.5f;
 
     [SerializeField] private Grid _grid;
@@ -35,6 +36,7 @@ public class TileManager : MonoBehaviour
     private void Awake()
     {
         enemyManager = FindObjectOfType<EnemyManager>();
+        _compass = FindObjectOfType<CompassManager>();
         GameManager.OnGameStateChange += GameManagerOnGameStateChanged;
         GameManager.NewMap += GameManagerOnNewMap;
         dataFromTiles = new Dictionary<TileBase, TileData>();
@@ -62,18 +64,6 @@ public class TileManager : MonoBehaviour
     public TileData GetTileType(Vector3Int pos) {
         TileBase tile = map.GetTile (pos);
         return dataFromTiles[tile];
-    }
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            //Debug.Log("clicked");
-            Vector2 mPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3Int gridPos = map.WorldToCell(mPos);
-            TileBase tile = map.GetTile(gridPos);
-            bool walkable = dataFromTiles[tile].walkable;
-            Debug.Log("Clicked at: " + dataFromTiles[tile]);
-        }
     }
 
     public void UpdateHub(Vector3Int pos) {
@@ -365,6 +355,7 @@ public class TileManager : MonoBehaviour
             roomSeeds.Add (newSeed);
         }
 
+        _compass.SetHubs (roomSeeds);
         foreach (var tile in roomSeeds)
         {
             int[] dir = {0,0,0,0,0,0};

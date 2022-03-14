@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private ScoreManager scoreManager;
     private EndManager endManager;
     private CameraManager cameraManager;
+    private CompassManager compass;
     private Vector3Int startPosition;
     private Vector3 coorPosition;
     private SpriteRenderer _rend;
@@ -47,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
         scoreManager = FindObjectOfType<ScoreManager>();
         endManager = FindObjectOfType<EndManager>();
         cameraManager = FindObjectOfType<CameraManager>();
+        compass = FindObjectOfType<CompassManager>();
         
         GameManager.OnGameStateChange += GameManagerOnGameStateChanged;
         GameManager.PlayerTurnBegin += GameManagerOnPTB;
@@ -74,7 +76,6 @@ public class PlayerMovement : MonoBehaviour
         startPosition = tileManager.getPositionGrid(transform.position);
         energy = maxEnergy+tileManager.getMovementModifier(startPosition);
         canMove = false;
-        GameManager.Instance.OnPTM ();
         var actTile = tileManager.GetTileType (startPosition);
         if (actTile.name == "TileHub")
         {
@@ -84,6 +85,7 @@ public class PlayerMovement : MonoBehaviour
                 UpdateGameProgress (startPosition);
             }
         }
+        GameManager.Instance.OnPTM ();
     }
 
     private void GameManagerOnPTM() {
@@ -99,6 +101,7 @@ public class PlayerMovement : MonoBehaviour
     private void UpdateGameProgress(Vector3Int pos) {
         _gameProgressBar.SetValue(_visitedHubs.Count);
         tileManager.UpdateHub (pos);
+        compass.DeleteHub (pos);
         if (_visitedHubs.Count == _hubsCount)
         {
             endManager.SetWin (true);
