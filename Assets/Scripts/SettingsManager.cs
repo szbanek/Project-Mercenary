@@ -10,10 +10,12 @@ public class SettingsManager : MonoBehaviour {
     [SerializeField] private GameObject _pausePanel;
     private AudioSource _music;
     private PlayerMovement _playerMovement;
+    private EnemyManager _enemies;
     private int id = 0;
     void Start() {
        _music = FindObjectOfType<AudioSource> ();
        _playerMovement = FindObjectOfType<PlayerMovement> ();
+       _enemies = FindObjectOfType<EnemyManager> ();
        _pausePanel.SetActive (false);
     }
 
@@ -72,6 +74,7 @@ public class SettingsManager : MonoBehaviour {
         _playerMovement.Pause();
         _pausePanel.SetActive (false);
         _pause.GetComponent<Button> ().interactable = true;
+        _enemies.DestroyAll ();
         GameManager.Instance.UpdateGameState (GameState.MenuMain);
     }
 

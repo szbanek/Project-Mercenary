@@ -38,10 +38,7 @@ public class EnemyManager : MonoBehaviour
     void GameManagerOnGameStateChanged(GameState state) {
         if (state == GameState.End)
         {
-            foreach (var en in enemiesPlacement)
-            {
-                Destroy (en);
-            }
+            DestroyAll ();
         }
     }
 
@@ -83,8 +80,8 @@ public class EnemyManager : MonoBehaviour
     }
 
     public void ResetEnemies() {
+        DestroyAll ();
         enemiesPlacement.Clear();
-        enemies.Clear ();
         foreach (var info in enemiesStartingPoints)
         {
             Create (info.Item2, info.Item1);
@@ -108,8 +105,20 @@ public class EnemyManager : MonoBehaviour
                 scoreManager.ChangeScore(enemyMovement.CalculateScore()); //kill
                 Destroy(enemies[i]);
                 enemies.RemoveAt(i);
+                break;
             }
         }
+    }
+
+    public void DestroyAll() {
+        for(int i = 0; i < enemies.Count; i++)
+        {
+            EnemyMovement enemyMovement = enemies[i].GetComponent<EnemyMovement> ();
+            tileManager.SetOcupied (enemyMovement.GetPosGrid(), false);
+            scoreManager.ChangeScore(enemyMovement.CalculateScore()); //kill
+            Destroy(enemies[i]);
+        }
+        enemies.Clear();
     }
 
     public List<Vector3Int> GetEnemiesPlacement()
