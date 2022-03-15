@@ -115,7 +115,6 @@ public class EnemyManager : MonoBehaviour
         {
             EnemyMovement enemyMovement = enemies[i].GetComponent<EnemyMovement> ();
             tileManager.SetOcupied (enemyMovement.GetPosGrid(), false);
-            scoreManager.ChangeScore(enemyMovement.CalculateScore()); //kill
             Destroy(enemies[i]);
         }
         enemies.Clear();
