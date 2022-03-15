@@ -14,6 +14,7 @@ public class EndManager : MonoBehaviour
     private ScoreManager scoreManager;
     private PlayerMovement _player;
     private EnemyManager _enemy;
+    
     private bool _win;
 
     void Start() {
@@ -56,7 +57,6 @@ public class EndManager : MonoBehaviour
     }
 
     public void BackClicked() {
-        
         GameManager.Instance.UpdateGameState (GameState.MenuMain);
     }
 
@@ -64,6 +64,7 @@ public class EndManager : MonoBehaviour
         _player.ResetGame();
         _enemy.ResetEnemies ();
         GameManager.Instance.UpdateGameState (GameState.Game);
+        GameManager.Instance.OnMapReady ();
     }
 
     public void SetWin(bool state) {

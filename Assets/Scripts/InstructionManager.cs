@@ -105,7 +105,7 @@ public class InstructionManager : MonoBehaviour {
         _contentText.text = _content[_actPage];
     }
     public void DonateClicked() {
-        Debug.Log ("Donate");
+        //Debug.Log ("Donate");
         _donatePanel.SetActive (true);
     }
 

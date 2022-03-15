@@ -67,9 +67,8 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void GameManagerOnMapReady() {
-        _hubsCount = tileManager.GetNumOfRooms ();
-        _gameProgressBar.SetMax (_hubsCount);
-        _gameProgressBar.SetValue (0);
+        // ResetGame ();
+        // _reaction = true;
     }
 
     private void GameManagerOnPTB() {
@@ -115,7 +114,6 @@ public class PlayerMovement : MonoBehaviour
         {
             ResetGame();
         }
-
         _rend.enabled = state == GameState.Game;
         _reaction = state == GameState.Game;
     }
@@ -128,7 +126,6 @@ public class PlayerMovement : MonoBehaviour
         canMove = false;
         isMoving = false;
         done = false;
-        _reaction = false;
         _visitedHubs.Clear ();
     }
     public void Pause() {
@@ -172,12 +169,6 @@ public class PlayerMovement : MonoBehaviour
                     }
                 }
             }
-
-            if (Input.GetKeyDown (KeyCode.Space))
-            {
-                int a = Random.Range (15, 35);
-                TakeDamage (a);
-            }
         }
     }
 
@@ -209,7 +200,7 @@ public class PlayerMovement : MonoBehaviour
     private async Task Attack(EnemyMovement enemy)
     {
         isMoving = true;
-        Debug.Log (enemy.GetPosGrid ());
+        //Debug.Log (enemy.GetPosGrid ());
         done = true;
         if(energy >= attackEnergy)
         {

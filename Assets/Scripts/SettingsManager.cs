@@ -55,14 +55,14 @@ public class SettingsManager : MonoBehaviour {
     }
 
     public void PauseClicked() {
-        Debug.Log ("Pause");
+        //Debug.Log ("Pause");
         _playerMovement.Pause();
         _pausePanel.SetActive (true);
         _pause.GetComponent<Button> ().interactable = false;
     }
 
     public void ResumeClicked() {
-        Debug.Log ("unpaused");
+        //Debug.Log ("unpaused");
         _playerMovement.Pause();
         _pausePanel.SetActive (false);
         _pause.GetComponent<Button> ().interactable = true;

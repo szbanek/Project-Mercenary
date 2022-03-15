@@ -5,18 +5,6 @@ using System.Threading.Tasks;
 
 public class AttackBall : MonoBehaviour
 {
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     private async Task<bool> MoveAnimation(Vector3 goal)
     {
         transform.position = Vector3.MoveTowards(transform.position, goal, 10f * Time.deltaTime);

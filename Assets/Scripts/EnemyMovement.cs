@@ -26,8 +26,7 @@ public class EnemyMovement : MonoBehaviour
     private SpriteRenderer _rend;
     private List<Vector3Int> route;
 
-
-    // Start is called before the first frame update
+    
     void Start()
     {
         this.transform.parent = GameObject.FindWithTag("Grid").transform;
@@ -39,16 +38,11 @@ public class EnemyMovement : MonoBehaviour
         playerMovement = FindObjectOfType<PlayerMovement> ();
         player = GameObject.FindWithTag("Player");
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    
 
     void OnDestroy() {
-        Debug.Log ("destroyed");
-        tileManager.SetOcupied (tileManager.getPositionGrid (transform.position), false);
+        //Debug.Log ("destroyed");
+        //tileManager.SetOcupied (tileManager.getPositionGrid (transform.position), false);
     }
 
     private async Task Move(int distance = 1) {
@@ -88,7 +82,7 @@ public class EnemyMovement : MonoBehaviour
             iterationCount ++;
             if (iterationCount > 6 * distance)
             {
-                Debug.Log ("brak możliwości ruchu");
+                //Debug.Log ("brak możliwości ruchu");
                 break;
             }
         }

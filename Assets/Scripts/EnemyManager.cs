@@ -14,8 +14,7 @@ public class EnemyManager : MonoBehaviour
     private List<GameObject> enemies = new List<GameObject> ();
     private List<Vector3Int> enemiesPlacement = new List<Vector3Int>();
     private List<Tuple<Vector3Int, int>> enemiesStartingPoints = new List<Tuple<Vector3Int, int>> ();
-
-    // Start is called before the first frame update
+    
     void Start()
     {
         tileManager = FindObjectOfType<TileManager>();
@@ -34,11 +33,6 @@ public class EnemyManager : MonoBehaviour
         GameManager.Enemy -= GameManagerOnEnemy;
         GameManager.MapReady -= GameManagerOnMapReady;
         GameManager.OnGameStateChange -= GameManagerOnGameStateChanged;
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     void GameManagerOnGameStateChanged(GameState state) {
@@ -110,6 +104,7 @@ public class EnemyManager : MonoBehaviour
             EnemyMovement enemyMovement = enemies[i].GetComponent<EnemyMovement> ();
             if(enemyMovement.GetPosGrid() == gridPos)
             {
+                tileManager.SetOcupied (gridPos, false);
                 scoreManager.ChangeScore(enemyMovement.CalculateScore()); //kill
                 Destroy(enemies[i]);
                 enemies.RemoveAt(i);

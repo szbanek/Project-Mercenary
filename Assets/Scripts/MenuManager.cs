@@ -36,7 +36,7 @@ public class MenuManager : MonoBehaviour {
     }
 
     public void InstructionClicked() {
-        Debug.Log ("Instr");
+        //Debug.Log ("Instr");
         GameManager.Instance.UpdateGameState (GameState.MenuInstruction);
     }
 

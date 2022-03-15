@@ -79,7 +79,7 @@ public class RightPanleManager : MonoBehaviour
     private void GameManagerOnHurt(int hp) {
         while (hp > 0)
         {
-            Debug.Log ("Loses: " + hp.ToString ());
+            //Debug.Log ("Loses: " + hp.ToString ());
             GameObject topOrb = _lifeList[_lifeList.Count - 1];
             int topHp = (int) (Math.Round(topOrb.transform.localScale.x, 2) * 40);
             if (topHp > hp)
