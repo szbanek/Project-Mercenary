@@ -46,7 +46,7 @@ public class MenuManager : MonoBehaviour {
 
     public void QuitClicked() {
         //GameManager.Instance.UpdateGameState (GameState.MenuQuit);
-        UnityEditor.EditorApplication.isPlaying = false;
+        //UnityEditor.EditorApplication.isPlaying = false;
         Application.Quit();
     }
 

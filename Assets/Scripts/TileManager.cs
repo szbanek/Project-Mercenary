@@ -54,7 +54,7 @@ public class TileManager : MonoBehaviour
         map.ClearAllTiles ();
         _data = lvl;
         GenerateMap ();
-        GameManager.Instance.OnMapReady ();
+        GameManager.Instance.OnMapReady (lvl.numOfRooms);
     }
 
     void GameManagerOnGameStateChanged(GameState state) {
@@ -528,6 +528,11 @@ public class TileManager : MonoBehaviour
         foreach (Vector3Int entry in boundries)
         {
             map.SetTile (entry, _data.tiles[1]);
+        }
+
+        if (boundries.Count == 0)
+        {
+            GenerateBoundries ();
         }
         boundries.Clear ();
     }

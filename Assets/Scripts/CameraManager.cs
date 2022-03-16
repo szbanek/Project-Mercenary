@@ -16,7 +16,7 @@ public class CameraManager : MonoBehaviour
         GameManager.MapReady -= GameManagerOnMapReady;
     }
 
-    void GameManagerOnMapReady() {
+    void GameManagerOnMapReady(int i) {
         Camera.main.transform.position = new Vector3 (0, 0, Camera.main.transform.position.z);
     }
 

@@ -42,7 +42,7 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public void GameManagerOnMapReady() {
+    public void GameManagerOnMapReady(int i) {
         GameManager.Instance.OnPTB ();
     }
 

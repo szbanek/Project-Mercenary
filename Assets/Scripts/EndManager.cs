@@ -16,6 +16,7 @@ public class EndManager : MonoBehaviour
     private EnemyManager _enemy;
     
     private bool _win;
+    private int _lvlSize;
 
     void Start() {
         scoreManager = FindObjectOfType<ScoreManager>();
@@ -25,12 +26,17 @@ public class EndManager : MonoBehaviour
     
     void Awake() {
         GameManager.OnGameStateChange += GameManagerOnGameStateChanged;
+        GameManager.MapReady += GameManagerOnMapReady;
     }
 
     void OnDestroy() {
         GameManager.OnGameStateChange -= GameManagerOnGameStateChanged;
+        GameManager.MapReady -= GameManagerOnMapReady;
     }
 
+    void GameManagerOnMapReady(int i) {
+        _lvlSize = i;
+    }
     void GameManagerOnGameStateChanged(GameState state) {
         if (state == GameState.End)
         {
@@ -64,7 +70,7 @@ public class EndManager : MonoBehaviour
         _player.ResetGame();
         _enemy.ResetEnemies ();
         GameManager.Instance.UpdateGameState (GameState.Game);
-        GameManager.Instance.OnMapReady ();
+        GameManager.Instance.OnMapReady (_lvlSize);
     }
 
     public void SetWin(bool state) {

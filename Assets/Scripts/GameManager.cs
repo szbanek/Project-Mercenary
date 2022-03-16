@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     public static event Action Lose;
     public static event Action<int> Hurt;
     public static event Action Move;
-    public static event Action MapReady;
+    public static event Action <int> MapReady;
     public static event Action<LevelData> NewMap;
 
     void Awake()
@@ -34,8 +34,8 @@ public class GameManager : MonoBehaviour
     public void OnNewMap(LevelData lvl) {
         NewMap ?.Invoke (lvl);
     }
-    public void OnMapReady() {
-        MapReady?.Invoke ();
+    public void OnMapReady(int i) {
+        MapReady?.Invoke (i);
     }
     public void OnMove() {
         Move?.Invoke ();

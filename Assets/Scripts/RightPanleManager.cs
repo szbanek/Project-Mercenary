@@ -31,8 +31,7 @@ public class RightPanleManager : MonoBehaviour
     void Start(){
         _endTurnButton.interactable = false;
         _playerTurn = false;
-        _energyList = new List<GameObject>();
-        _lifeList = new List<GameObject> ();
+        
         
         RectTransform tr = _canvas.GetComponent<RectTransform>();
         _UIwidth = tr.rect.width;
@@ -52,6 +51,8 @@ public class RightPanleManager : MonoBehaviour
     }
     void Awake()
     {
+        _energyList = new List<GameObject>();
+        _lifeList = new List<GameObject> ();
         GameManager.OnGameStateChange += GameManagerOnGameStateChanged;
         GameManager.PlayerTurnMain += GameManagerOnPTM;
         GameManager.PlayerTurnEnd += GameManagerOnPTE;

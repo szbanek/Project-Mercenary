@@ -35,13 +35,13 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         energy = maxEnergy;
-        _rend = this.gameObject.GetComponent<SpriteRenderer> ();
         _visitedHubs = new List<Vector3Int> ();
     }
 
     
     void Awake()
     {
+        _rend = gameObject.GetComponent<SpriteRenderer> ();
         tileManager = FindObjectOfType<TileManager>();
         rangeManager = FindObjectOfType<RangeManager>();
         enemyManager = FindObjectOfType<EnemyManager>();
@@ -66,7 +66,9 @@ public class PlayerMovement : MonoBehaviour
         GameManager.MapReady -= GameManagerOnMapReady;
     }
 
-    private void GameManagerOnMapReady() {
+    private void GameManagerOnMapReady(int i) {
+        _hubsCount = i;
+        _gameProgressBar.SetMax (_hubsCount);
         // ResetGame ();
         // _reaction = true;
     }
@@ -98,6 +100,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void UpdateGameProgress(Vector3Int pos) {
+        
         _gameProgressBar.SetValue(_visitedHubs.Count);
         tileManager.UpdateHub (pos);
         compass.DeleteHub (pos);
@@ -106,6 +109,10 @@ public class PlayerMovement : MonoBehaviour
             endManager.SetWin (true);
             GameManager.Instance.UpdateGameState (GameState.End);
         }
+    }
+
+    public void SetHubCount(int v) {
+        _hubsCount = v;
     }
 
 
@@ -121,6 +128,7 @@ public class PlayerMovement : MonoBehaviour
     public void ResetGame() {
         scoreManager.SetStartingValue (100);
         _gameProgressBar.SetValue (0);
+        _gameProgressBar.SetMax (_hubsCount);
         _health = 120;
         transform.position = Vector3.zero;
         canMove = false;
