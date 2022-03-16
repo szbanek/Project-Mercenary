@@ -182,7 +182,7 @@ public class RightPanleManager : MonoBehaviour
             SetLife ();
         }
 
-        if (state == GameState.End)
+        if (state == GameState.End || state == GameState.MenuMain)
         {
             ClearOrbs();
         }
