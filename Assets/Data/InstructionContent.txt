@@ -2,6 +2,6 @@
 To attack an enemy click on an occupied tile. The Mercenary will come closer and attack. Each attack costs one energy point.
 When you finish your action, enemy round begins. It will starts automatically when you have no energy left. You can also press the "end" button or your character icon.
 In their rounds, enemies will move to new positions and attack the Mercenary if they can. Each attack will lower your life points.
-Your goal is to visit all communication hubs and activate them. To activate a hub the Mercenary need to finish his round on the hub tile.
+Your goal is to visit all communication hubs and activate them. To activate a hub the Mercenary need to finish his round on the hub tile. The compass will show you, where the closest hub is.
 Bonuses are added to your stats at the beginning and end of your round. It can affect you life points, energy, or hide you from enemies. Choose carefully.
 Your score is calculated based on number of used turns, lost life points and damage done to enemies.
