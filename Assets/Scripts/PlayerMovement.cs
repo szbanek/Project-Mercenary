@@ -4,7 +4,9 @@ using UnityEngine;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
 
+[RequireComponent(typeof(Animator))]
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private int maxEnergy;
@@ -13,6 +15,8 @@ public class PlayerMovement : MonoBehaviour
     private int energy;
     private int _health = 120;
     [SerializeField] private int attackDamage = 20;
+    [SerializeField] private Sprite idleSprite;
+    private Animator animator;
     private TileManager tileManager;
     private RangeManager rangeManager;
     private EnemyManager enemyManager;
@@ -41,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
     
     void Awake()
     {
-        _rend = gameObject.GetComponent<SpriteRenderer> ();
+        _rend = gameObject.GetComponent<SpriteRenderer>();
         tileManager = FindObjectOfType<TileManager>();
         rangeManager = FindObjectOfType<RangeManager>();
         enemyManager = FindObjectOfType<EnemyManager>();
@@ -49,6 +53,8 @@ public class PlayerMovement : MonoBehaviour
         endManager = FindObjectOfType<EndManager>();
         cameraManager = FindObjectOfType<CameraManager>();
         compass = FindObjectOfType<CompassManager>();
+        animator = GetComponent<Animator>();
+        animator.enabled = false;
         
         GameManager.OnGameStateChange += GameManagerOnGameStateChanged;
         GameManager.PlayerTurnBegin += GameManagerOnPTB;
@@ -74,6 +80,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void GameManagerOnPTB() {
+        OnDemandRendering.renderFrameInterval = 30;
         startPosition = tileManager.getPositionGrid(transform.position);
         energy = maxEnergy+tileManager.getMovementModifier(startPosition);
         canMove = false;
@@ -141,6 +148,7 @@ public class PlayerMovement : MonoBehaviour
     }
     async void Update()
     {
+        // Debug.Log(OnDemandRendering.renderFrameInterval);
         if (_reaction)
         {
             if (canMove && !isMoving)
@@ -153,7 +161,10 @@ public class PlayerMovement : MonoBehaviour
                     EnemyMovement enemy = enemyManager.GetEnemyByGrid (gridPos);
                     if (gridPos == tileManager.getPositionGrid (transform.position))
                     {
-                        GameManager.Instance.OnPTE ();
+                        OnDemandRendering.renderFrameInterval = 1;
+                        canMove = false;
+                        GameManager.Instance.OnPTE();
+                        return;
                     }
 
                     if (enemy != null && !done)
@@ -191,18 +202,27 @@ public class PlayerMovement : MonoBehaviour
         }
         int dist = route.Count;
         energy -= dist;
+
+        animator.enabled = true;
+        animator.Play(0);
+        OnDemandRendering.renderFrameInterval = 1;
+
         for(int i=0; i < route.Count; i++)
         {
             while(await MoveAnimation(tileManager.ToPix(route[i])));
             startPosition = tileManager.getPositionGrid(transform.position);
             coorPosition = transform.position;
         }
+
+        animator.enabled = false;
+        OnDemandRendering.renderFrameInterval = 30;
+        _rend.sprite = idleSprite;
         GameManager.Instance.OnMove();
         cameraManager.UpdateCamera();
         isMoving = false;
         if (energy <= 0)
         {
-            GameManager.Instance.OnPTE ();
+            GameManager.Instance.OnPTE();
         }
     }
     private async Task Attack(EnemyMovement enemy)
@@ -213,7 +233,9 @@ public class PlayerMovement : MonoBehaviour
         if(energy >= attackEnergy)
         {
             energy -= attackEnergy;
+            OnDemandRendering.renderFrameInterval = 1;
             await AttackAnimation(enemy);
+            OnDemandRendering.renderFrameInterval = 30;
             GameManager.Instance.OnMove(); //GameManager.Instance.OnAttack();
             isMoving = false;
             if (energy == 0)

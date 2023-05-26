@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 
 public class EnemyManager : MonoBehaviour
@@ -52,6 +53,7 @@ public class EnemyManager : MonoBehaviour
 
     public async void GameManagerOnEnemy()
     {
+        OnDemandRendering.renderFrameInterval = 1;
         await EnemiesMove();
         GameManager.Instance.OnPTB();
     }

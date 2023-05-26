@@ -46,7 +46,7 @@ public class EnemyMovement : MonoBehaviour
     }
 
     private async Task Move(int distance = 1) {
-        tileManager.SetOcupied (tileManager.getPositionGrid (transform.position), false);
+        tileManager.SetOcupied(tileManager.getPositionGrid (transform.position), false);
         if (route.Count < distance)
         {
             distance = route.Count;
@@ -54,7 +54,7 @@ public class EnemyMovement : MonoBehaviour
         
         for(int i=0; i<distance; i++)
         {
-             if(energy >= moveEnergy && tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) > 1)
+            if(energy >= moveEnergy && tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) > 1)
             {
                 while(await MoveAnimation(tileManager.ToPix(route[i])));
                 energy -= moveEnergy;
@@ -64,7 +64,7 @@ public class EnemyMovement : MonoBehaviour
                 break;
             }
         }
-        tileManager.SetOcupied (tileManager.getPositionGrid (transform.position), true);
+        tileManager.SetOcupied(tileManager.getPositionGrid (transform.position), true);
     }
 
     private List <Vector3Int >  GetRandomPath(int distance) {
@@ -72,15 +72,15 @@ public class EnemyMovement : MonoBehaviour
         route.Add(GetPosGrid());
         int iterationCount = 0;
         
-        while (route.Count < distance)
+        while(route.Count < distance)
         {
-            var newPos = tileManager.GetGivenNeighbour (route[route.Count-1],Random.Range (0, 6));
-            if (tileManager.isWalkable (newPos) && !tileManager.IsOcupied (newPos) && !route.Contains (newPos))
+            var newPos = tileManager.GetGivenNeighbour(route[route.Count-1],Random.Range (0, 6));
+            if(tileManager.isWalkable(newPos) && !tileManager.IsOcupied (newPos) && !route.Contains (newPos))
             {
                 route.Add (newPos);
             }
             iterationCount ++;
-            if (iterationCount > 6 * distance)
+            if(iterationCount > 6 * distance)
             {
                 //Debug.Log ("brak możliwości ruchu");
                 break;
@@ -119,8 +119,8 @@ public class EnemyMovement : MonoBehaviour
 
     private async Task<bool> MoveAnimation(Vector3 goal)
     {
-        if(tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) > 12 &&
-        tileManager.getDistance(tileManager.getPositionGrid(goal), tileManager.getPositionGrid(player.transform.position)) > 12)
+        if(tileManager.getDistance(tileManager.getPositionGrid(transform.position), tileManager.getPositionGrid(player.transform.position)) > 10 &&
+        tileManager.getDistance(tileManager.getPositionGrid(goal), tileManager.getPositionGrid(player.transform.position)) > 10)
         {
             transform.position = goal;
             return false;

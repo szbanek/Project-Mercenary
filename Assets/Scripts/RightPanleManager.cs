@@ -163,7 +163,7 @@ public class RightPanleManager : MonoBehaviour
 	
 
     private void GameManagerOnUIOn() {
-        _endTurnButton.interactable = true;
+        // _endTurnButton.interactable = true;
         _playerTurn = true;
     }
 
