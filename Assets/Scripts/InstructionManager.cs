@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-
 public class InstructionManager : MonoBehaviour {
     [SerializeField] private Button _backToMenu;
     [SerializeField] private TMP_Text _title;
@@ -52,7 +51,8 @@ public class InstructionManager : MonoBehaviour {
     }
 
     void GenerateContentList() {
-        _content = new List<string>(System.IO.File.ReadAllLines ("Assets/Data/InstructionContent.txt"));
+        char[] delims = new[] { '\r', '\n' };
+        _content = new List<string>(Resources.Load<TextAsset>("InstructionContent").text.Split(delims, System.StringSplitOptions.RemoveEmptyEntries));
     }
 
     void OnDestroy() {
@@ -89,7 +89,7 @@ public class InstructionManager : MonoBehaviour {
         _title.text = "Credits";
         _instructionPanel.SetActive (false);
         _creditsPanel.SetActive (true);
-        _creditsText.text = System.IO.File.ReadAllText ("Assets/Data/credits.txt");
+        _creditsText.text = Resources.Load<TextAsset>("credits").text;
     }
 
     public void NextClicked() {

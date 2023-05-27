@@ -3,7 +3,7 @@ Creators:
 Stefan Zbąszyniak
 Karol Wesołowski
 
-Build on Unity 2021.2
+Build on Unity 2022.1.1f1
 Graphics designed using Gimp 2.10
 Coded in JetBrains Rider 2021.3 & VSCode
 

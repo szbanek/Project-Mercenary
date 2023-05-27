@@ -89,7 +89,7 @@ public class IntrodutionManager : MonoBehaviour {
     }
 
     private IEnumerator TypeWriter() {
-        var txt = System.IO.File.ReadAllText ("Assets/Data/intro.txt");
+        var txt = Resources.Load<TextAsset>("intro").text;
         float time = 0;
         int charIndex = 0;
         while (charIndex < txt.Length)
